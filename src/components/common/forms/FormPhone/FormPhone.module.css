@@ -1,0 +1,15 @@
+.phoneCode-select, .phoneCode-select > div{
+    border-width: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.phoneCode-select > div{
+    border-width: 0 !important;
+    margin-top: 0 !important;
+    background: transparent !important;
+}
+.phoneCode-select > div > span {
+    font-size: .75rem;
+    line-height: 1rem;
+}

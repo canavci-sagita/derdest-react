@@ -1,0 +1,13 @@
+.case-card-container{
+    position:relative;
+}
+
+.case-card-container > button{
+    display:none;
+    cursor:pointer;
+    position:absolute;
+    right:-8px;
+    top:-8px;
+}
+
+.case-card-container:hover > button{display:block;}

@@ -1,0 +1,41 @@
+.container {
+  width: 100%;
+  max-width: 96rem;
+}
+
+.after\:bg-accent {
+  &::after {
+    content: var(--tw-content);
+    /* background-image: var(--background-image-accent); */
+    /* background-image: url("../images/auth/accent.svg"); */
+  }
+}
+.before\:bg-noise {
+  &::before {
+    content: var(--tw-content);
+    /* background-image: var(--background-image-noise); */
+    background-image: url("../images/auth/noise.png");
+  }
+}
+
+.xl\:before\:hidden {
+  @media (width >= 80rem) {
+    &::before {
+      content: var(--tw-content);
+      display: none;
+    }
+  }
+}
+
+.xl\:after\:hidden {
+  @media (width >= 80rem) {
+    &::after {
+      content: var(--tw-content);
+      display: none;
+    }
+  }
+}
+
+.box:not(.rounded-none) {
+  border-radius: 0.75rem;
+}

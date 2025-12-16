@@ -1,0 +1,4 @@
+.quill-wrapper div div {
+    min-height:12rem !important;
+    display:block;
+}

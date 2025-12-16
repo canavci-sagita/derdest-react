@@ -1,0 +1,95 @@
+/* Remove default border and shadow for cleaner look */
+.fc {
+  font-family: inherit; /* Use Tailwind sans font */
+}
+
+/* Toolbar Buttons */
+.fc .fc-button {
+  @apply bg-white border border-slate-200 text-slate-600 shadow-sm font-medium text-xs py-1.5 px-3 rounded-md transition-all;
+}
+
+.fc .fc-button:hover {
+  @apply bg-slate-50 text-slate-800 border-slate-300;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+  @apply bg-indigo-50 text-indigo-600 border-indigo-200 shadow-none;
+}
+
+.fc .fc-button:focus {
+  @apply ring-0 shadow-none;
+}
+
+/* Toolbar Title */
+.fc .fc-toolbar-title {
+  @apply text-sm font-bold text-slate-700 uppercase tracking-wide;
+}
+
+/* List View Styling */
+.fc-theme-standard .fc-list {
+  @apply border border-slate-100 rounded-lg overflow-hidden;
+}
+
+.fc .fc-list-day-cushion {
+  @apply bg-slate-50 py-2 px-4;
+}
+
+.fc .fc-list-day-text,
+.fc .fc-list-day-side-text {
+  @apply text-slate-700 font-bold text-xs uppercase tracking-wide no-underline;
+}
+
+.fc .fc-list-event:hover td {
+  @apply bg-indigo-50/50 cursor-pointer;
+}
+
+.fc-list-event-dot {
+  @apply border-indigo-500;
+}
+
+.fc-list-event-title {
+  @apply text-slate-700 font-medium text-sm;
+}
+
+.fc-list-event-time {
+  @apply text-slate-500 text-xs font-medium;
+}
+
+/* Month/Grid View Styling */
+.fc-col-header-cell-cushion {
+  @apply text-slate-500 text-xs font-bold uppercase py-2 no-underline;
+}
+
+.fc-daygrid-day-number {
+  @apply text-slate-600 text-xs font-medium p-1 no-underline;
+}
+
+.fc-day-today {
+  @apply bg-indigo-50/30 !important;
+}
+
+/* Event Pills in Month View */
+.fc-h-event {
+  @apply bg-indigo-100 border-none rounded shadow-sm px-1;
+}
+
+.fc-event {
+  @apply truncate
+}
+
+.fc-event-title {
+  @apply text-indigo-700 font-medium text-xs;
+}
+
+.fc-event-time {
+  @apply text-indigo-600 font-normal text-[10px];
+}
+
+.fc-event.fc-event-start.fc-event-end.fc-event-past.fc-daygrid-event.fc-daygrid-dot-event{
+  @apply text-theme-2
+}
+
+.fc-daygrid-more-link.fc-more-link{
+  @apply text-sky-600;
+}

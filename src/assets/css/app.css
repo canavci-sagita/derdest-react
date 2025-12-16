@@ -1,0 +1,15 @@
+@import "./fonts/_public-sans.css";
+
+@import "./default/_box.css";
+@import "./default/_global.css";
+@import "./default/_image-fit.css";
+@import "./default/_scrollbar-hidden.css";
+@import "./default/_typing-dots.css";
+@import "./default/_zoom-in.css";
+
+@import "./razor.css";
+@import "./global.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
