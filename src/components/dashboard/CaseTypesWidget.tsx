@@ -118,7 +118,7 @@ const CaseTypesPieChartWidget: React.FC = () => {
             <AppIcon icon="ChartPie" className="w-5 h-5" />
           </div>
           <h3 className="font-bold text-slate-800 text-base">
-            {t("casessByType")}
+            {t("casesByType")}
           </h3>
         </div>
       </div>
