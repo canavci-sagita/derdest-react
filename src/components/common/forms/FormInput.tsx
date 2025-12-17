@@ -6,7 +6,7 @@ import { twMerge } from "tailwind-merge";
 import { formInlineContext } from "./FormInline";
 import { inputGroupContext } from "./InputGroup";
 import { useTranslation } from "@/stores/TranslationContext";
-import AppIcon, { icons } from "../ui/AppIcon";
+import AppIcon, { AppIconName } from "../ui/AppIcon";
 import { IMaskInput } from "react-imask";
 
 export interface FormInputProps
@@ -15,7 +15,7 @@ export interface FormInputProps
   formInputSize?: "sm" | "lg";
   rounded?: boolean;
   localizedPlaceholder?: string;
-  icon?: keyof typeof icons;
+  icon?: AppIconName;
   mask?: string;
 }
 

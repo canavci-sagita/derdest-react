@@ -1,6 +1,6 @@
 "use server";
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { jwtDecode } from "jwt-decode";
 import { CurrentUser } from "@/types/user.types";
 import { COOKIE_CONSTANTS } from "@/lib/constants/cookie.constants";
@@ -49,6 +49,14 @@ const getSessionFn = async (): Promise<{
   const cookieStore = await cookies();
   let authToken = cookieStore.get(COOKIE_CONSTANTS.AUTH_TOKEN)?.value;
 
+  //NOTE: Checking headers if Cookie is missing (For SignalR/API)
+  if (!authToken) {
+    const headersList = await headers();
+    const authHeader = headersList.get("Authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      authToken = authHeader.substring(7);
+    }
+  }
   try {
     if (authToken) {
       let decodedToken = jwtDecode<DecodedToken & { exp: number }>(authToken);
@@ -61,9 +69,11 @@ const getSessionFn = async (): Promise<{
       if (isExpiringSoon) {
         const cookieHeader = cookieStore.toString();
 
+        console.log("REFRESHING TOKEN");
         const refreshResponse = await refreshToken(authToken, cookieHeader);
 
         if (refreshResponse?.isSuccess && refreshResponse.result?.token) {
+          console.log("TOKEN REFRESH SUCCESS");
           const newToken = refreshResponse.result.token;
           authToken = newToken;
           decodedToken = jwtDecode(newToken);
@@ -84,6 +94,7 @@ const getSessionFn = async (): Promise<{
             );
           }
         } else {
+          console.log("TOKEN REFRESH FAILED");
           try {
             cookieStore.delete(COOKIE_CONSTANTS.AUTH_TOKEN);
           } catch {

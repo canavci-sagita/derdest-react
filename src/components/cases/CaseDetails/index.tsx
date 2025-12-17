@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import AppIcon, { icons } from "@/components/common/ui/AppIcon";
+import AppIcon, { AppIconName } from "@/components/common/ui/AppIcon";
 import { useTranslation } from "@/stores/TranslationContext";
 import { Avatar, Radio, RadioChangeEvent, Space } from "antd";
 import Button from "@/components/common/ui/Button";
@@ -120,7 +120,7 @@ const CaseDetails: React.FC<CaseDetailsProps> = ({ initialData }) => {
               >
                 <span className="flex items-center">
                   <AppIcon
-                    icon={tab.icon as keyof typeof icons}
+                    icon={tab.icon as AppIconName}
                     className="w-5 h-5 mr-3"
                   />
                   {tab.label}

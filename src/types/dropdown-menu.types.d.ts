@@ -1,4 +1,5 @@
-import * as lucideIcons from "lucide-react";
+import { AppIconName } from "@/components/common/ui/AppIcon";
+import type { icons } from "lucide-react";
 
 const { icons } = lucideIcons;
 
@@ -10,8 +11,8 @@ type PopconfirmProps = {
 
 export interface DropdownMenuItem {
   type: "item";
-  icon: keyof typeof icons;
-  extra?: keyof typeof icons;
+  icon: AppIconName;
+  extra?: AppIconName;
   iconClassName?: string;
   key: string;
   label: string | ReactNode;

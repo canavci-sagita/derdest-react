@@ -9,8 +9,16 @@ const SUPPORTED_LANGS = ["en", "et", "tr"];
 const DEFAULT_LANG = "tr";
 const DEFAULT_LOGIN_REDIRECT = "/";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { nextUrl } = request;
+
+  if (
+    nextUrl.pathname.includes("/hubs/") ||
+    nextUrl.pathname.includes("/notifications")
+  ) {
+    return NextResponse.next();
+  }
+
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = nextUrl.pathname.startsWith("/auth");
 

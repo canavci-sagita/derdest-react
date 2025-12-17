@@ -105,7 +105,7 @@ const renderTabLabel = (title: string, fieldErrors: FieldErrors<unknown>) => {
 const initialState = createFormState<AddEditUserVM>();
 
 const AddEditUser: React.FC<AddEditUserProps> = ({ initialData, roles }) => {
-  const { t } = useTranslation();
+  const { t, switchLanguage } = useTranslation();
   const router = useRouter();
   const { message } = App.useApp();
 
@@ -259,6 +259,7 @@ const AddEditUser: React.FC<AddEditUserProps> = ({ initialData, roles }) => {
   useEffect(() => {
     if (displayState.status === "success") {
       message.success(displayState.message);
+      switchLanguage("tr");
       router.push("/users");
     } else if (displayState.status === "error" && displayState.message) {
       message.error(displayState.message);

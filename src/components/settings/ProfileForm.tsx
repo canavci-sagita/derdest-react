@@ -106,7 +106,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
     if (countries.length > 0 && data?.address?.country) {
       handleCountryChange(data.address.country);
     }
-  }, [countries, data.address?.country, handleCountryChange]);
+  }, [countries, data?.address?.country]);
 
   useEffect(() => {
     if (displayState.status === "success") {
@@ -129,7 +129,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
                 {t("accountDetails")}
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Your official legal identification and registration.
+                {t("accountDetails.hint")}
               </p>
             </div>
           </div>
@@ -171,7 +171,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
                 {t("appSettings")}
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Preferences for language and legal jurisdiction.
+                {t("appSettings.hint")}
               </p>
             </div>
           </div>
@@ -243,7 +243,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
                 {t("address")}
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Your primary business or correspondence address.
+                {t("address.hint")}
               </p>
             </div>
           </div>

@@ -114,7 +114,7 @@ const AddEditClient: React.FC<AddEditClientProps> = ({ initialData }) => {
         handleCountryChange(initialData.address.country);
       }
     }
-  }, [initialData, handleCountryChange]);
+  }, [initialData]);
 
   useEffect(() => {
     if (displayState.status === "success") {

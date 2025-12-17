@@ -1,8 +1,8 @@
-import { icons } from "@/components/common/ui/AppIcon";
+import { AppIconName, icons } from "@/components/common/ui/AppIcon";
 
 export interface NavigationLink {
   type: "link";
-  icon: keyof typeof icons;
+  icon: AppIconName;
   title: string;
   path: string;
   badge?: number;

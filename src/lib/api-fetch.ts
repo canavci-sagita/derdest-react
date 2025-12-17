@@ -57,6 +57,7 @@ export const apiFetch = async (url: string, options: ApiFetchOptions = {}) => {
     ...options,
     credentials: "include",
     headers: headers,
+    cache: "no-store",
   });
 
   if (!response.ok) {

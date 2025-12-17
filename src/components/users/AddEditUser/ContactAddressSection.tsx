@@ -67,7 +67,7 @@ const ContactAddressSection: React.FC<ContactAddressSectionProps> = ({
     if (data.address?.country && countries.length > 0) {
       handleCountryChange(data.address.country);
     }
-  }, [countries, data.address?.country, handleCountryChange]);
+  }, [countries, data.address?.country]);
 
   return (
     <section className="pt-4">

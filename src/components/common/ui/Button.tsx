@@ -3,7 +3,7 @@
 import { useTranslation } from "@/stores/TranslationContext";
 import { forwardRef } from "react";
 import { twMerge } from "tailwind-merge";
-import AppIcon, { icons } from "@/components/common/ui/AppIcon";
+import AppIcon, { AppIconName } from "@/components/common/ui/AppIcon";
 import LoadingIcon from "./LoadingIcon";
 
 type Variant =
@@ -49,7 +49,7 @@ type ButtonProps<T extends React.ElementType> = PolymorphicComponentPropWithRef<
     rounded?: Rounded;
     label?: string;
     localizedLabel?: string;
-    icon?: keyof typeof icons;
+    icon?: AppIconName;
     iconDirection?: IconDirection;
     iconClassName?: string;
     loading?: boolean;
