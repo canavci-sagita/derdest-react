@@ -1,7 +1,6 @@
 "use server";
 
 import { COOKIE_CONSTANTS } from "@/lib/constants/cookie.constants";
-import { getSession } from "@/lib/session";
 import { getErrorMessage, getErrorResponse } from "@/lib/utils/error.utils";
 import { validateFormData } from "@/lib/utils/form.utils";
 import { createLocalizedSchema } from "@/lib/utils/validation.utils";

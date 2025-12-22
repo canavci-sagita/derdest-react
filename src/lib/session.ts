@@ -7,6 +7,10 @@ import { COOKIE_CONSTANTS } from "@/lib/constants/cookie.constants";
 import { DecodedToken, mapJwtToCurrentUser } from "./utils/auth.utils";
 import { getAbsoluteUrl } from "./utils/url.utils";
 
+export type AppSession = {
+  token: DecodedToken & { exp: number };
+  user: CurrentUser;
+};
 /**
  * A simple, read-only function to get the current user from the request cookies.
  * It does NOT refresh the token. Use this in Server Components for rendering.
@@ -42,7 +46,7 @@ export const getToken = async () => {
  * It reads the cookie, checks for expiration, and automatically refreshes the token if needed.
  * @returns A Promise that resolves with the user object and the valid token string.
  */
-export async function getSession() {
+export async function getSession(): Promise<AppSession | null> {
   const token = await getToken();
 
   if (token) {
