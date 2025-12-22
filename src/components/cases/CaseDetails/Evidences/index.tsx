@@ -75,7 +75,7 @@ const Evidences: React.FC<EvidencesProps> = ({ caseId }) => {
       setLoadingRowId(evidenceId);
       const response = await getEvidence(evidenceId);
       if (response.isSuccess) {
-        setEditingData(response.result);
+        setEditingData(response.result || null);
         setPreselectedTimelineLabel(timeline || null);
 
         setIsModalOpen(true);

@@ -51,7 +51,7 @@ const ContractTypeTable: React.FC<ContractTypeTableProps> = ({
     const result = await getContractTypeAction(id);
     if (result.isSuccess) {
       const response = result as ApiResponseOf<AddEditContractTypeDto>;
-      setEditingData(response.result);
+      setEditingData(response.result || null);
       setIsModalOpen(true);
     } else {
       message.error(result.messages);

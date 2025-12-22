@@ -33,12 +33,12 @@ const InvitationPage = () => {
       message.error(t("invalidInvitation.data"));
       router.push("/auth/sign-in");
     } else {
-      verifyInvitationAction({ invitation }).then((res) => {
+      verifyInvitationAction({ invitation }).then((response) => {
         setLoading(false);
-        if (res.isSuccess) {
-          setVerificationResponse(res.result);
+        if (response.isSuccess) {
+          setVerificationResponse(response.result || null);
         } else {
-          message.error(res.messages);
+          message.error(response.messages);
           router.push("/auth/sign-in");
         }
       });

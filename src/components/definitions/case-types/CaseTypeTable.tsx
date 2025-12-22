@@ -49,7 +49,7 @@ const CaseTypeTable: React.FC<CaseTypeTableProps> = ({ initialData }) => {
     const result = await getCaseTypeAction(id);
     if (result.isSuccess) {
       const response = result as ApiResponseOf<AddEditCaseTypeDto>;
-      setEditingData(response.result);
+      setEditingData(response.result || null);
       setIsModalOpen(true);
     } else {
       message.error(result.messages);

@@ -75,7 +75,7 @@ const Parties: React.FC<PartiesProps> = ({ caseId }) => {
 
       const response = await getParty(partyId);
       if (response.isSuccess) {
-        setEditingData(response.result);
+        setEditingData(response.result || null);
         setPreselectedPartyTypeLabel(partyType!);
         setIsModalOpen(true);
       } else {
