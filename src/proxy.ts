@@ -60,7 +60,7 @@ export async function proxy(request: NextRequest) {
         .then((res) => {
           setTimeout(() => {
             refreshPromise = null;
-          }, 1000);
+          }, 5000 /*1000*/);
           return res;
         })
         .catch(() => {
@@ -124,6 +124,9 @@ export async function proxy(request: NextRequest) {
   return response;
 }
 
+/**
+ * Handles token expiration logic based on refresh token.
+ */
 async function handleTokenExpiration(
   request: NextRequest
 ): Promise<RefreshResult> {
