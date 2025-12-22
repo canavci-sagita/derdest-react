@@ -30,6 +30,7 @@ import {
 import { ApiResponseOf } from "@/services/common/ApiResponse";
 import { ActionFormState } from "@/types/form.types";
 import { jwtDecode } from "jwt-decode";
+import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -236,7 +237,9 @@ export const signOutAction = async () => {
   cookieStore.delete(COOKIE_CONSTANTS.AUTH_TOKEN);
   cookieStore.delete(COOKIE_CONSTANTS.REFRESH_TOKEN);
 
-  redirect("/auth/sign-in");
+  revalidatePath("/", "layout");
+
+  return { success: true };
 };
 
 export const verifyInvitationAction = async (

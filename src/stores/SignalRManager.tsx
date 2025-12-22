@@ -8,25 +8,36 @@ import { eventBus } from "@/lib/eventBus";
 export const SignalRManager: React.FC = () => {
   const connectionRef = useRef<signalR.HubConnection | null>(null);
   const isConnectingRef = useRef(false);
+  const isMountedRef = useRef(true);
+  const isLoggingOutRef = useRef(false);
 
   useEffect(() => {
-    if (connectionRef.current || isConnectingRef.current) {
-      return;
-    }
-
-    isConnectingRef.current = true;
-
+    isMountedRef.current = true;
+    isLoggingOutRef.current = false;
     const startConnection = async () => {
+      if (isLoggingOutRef.current) return;
+
       try {
         const connection = new signalR.HubConnectionBuilder()
           .withUrl(SIGNALR_CONSTANTS.NOTIFICATION_HUB_URL, {
             accessTokenFactory: async () => {
+              if (!isMountedRef.current || isLoggingOutRef.current) {
+                return "";
+              }
+
               const res = await fetch("/api/auth/signalr-token", {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
                 // NOTE: defaults to 'same-origin', but explicit credential inclusion is safer if it will be moved to a different subdomain
                 credentials: "include",
               });
+
+              if (res.status === 401) {
+                console.warn(
+                  "SignalR token fetch 401 - user likely logged out"
+                );
+                return "";
+              }
 
               if (!res.ok) {
                 throw new Error("Failed to fetch SignalR access token");
@@ -67,24 +78,43 @@ export const SignalRManager: React.FC = () => {
 
         connectionRef.current = connection;
         await connection.start();
-        console.log("SignalR Connected");
       } catch (err) {
         console.error("SignalR connection failed:", err);
-        // Important: If initial connection fails, 'withAutomaticReconnect' does NOT trigger.
-        // You might want a manual retry here or just let the user refresh the page.
+        //TODO: If initial connection fails, 'withAutomaticReconnect' does NOT trigger. May need a manual retry here or just let the user refresh the page.
       } finally {
         isConnectingRef.current = false;
       }
     };
 
+    const stopConnection = async () => {
+      if (connectionRef.current) {
+        const conn = connectionRef.current;
+        connectionRef.current = null;
+        try {
+          await conn.stop();
+        } catch {}
+      }
+    };
+
+    const handleLogout = () => {
+      isLoggingOutRef.current = true;
+      stopConnection();
+    };
+
+    eventBus.on("signout", handleLogout);
+
+    if (connectionRef.current || isConnectingRef.current) {
+      return;
+    }
+
+    isConnectingRef.current = true;
+
     startConnection();
 
     return () => {
-      if (connectionRef.current) {
-        connectionRef.current.stop();
-        connectionRef.current = null;
-      }
-      isConnectingRef.current = false;
+      isMountedRef.current = false;
+      eventBus.off("signout", handleLogout);
+      stopConnection();
     };
   }, []);
 

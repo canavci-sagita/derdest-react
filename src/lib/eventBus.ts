@@ -3,6 +3,7 @@ import { ChatNotification, ProgressNotification } from "@/types/signalr.types";
 export type EventMap = {
   progress: [ProgressNotification];
   chat: [ChatNotification];
+  signout: [void];
 };
 
 type EventCallback<T extends unknown[]> = (...args: T) => void;

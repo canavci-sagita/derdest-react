@@ -10,13 +10,14 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "@/stores/TranslationContext";
 import { DropdownMenuEntry } from "@/types/dropdown-menu.types";
 import { ROLE_CONSTANTS } from "@/lib/constants/role.constants";
+import { eventBus } from "@/lib/eventBus";
 
 const UserMenu = () => {
   const { t } = useTranslation();
   const { setSwitchAccountPanel } = useLayoutPanels();
   const router = useRouter();
 
-  const handleMenuItemClick = (key: string) => {
+  const handleMenuItemClick = async (key: string) => {
     switch (key) {
       case "switch":
         setSwitchAccountPanel(true);
@@ -31,7 +32,10 @@ const UserMenu = () => {
         router.push("/settings/change-password");
         break;
       case "signOut":
-        signOutAction();
+        eventBus.emit("signout");
+        await signOutAction();
+        router.push("/auth/sign-in");
+        router.refresh();
         break;
       default:
         break;
