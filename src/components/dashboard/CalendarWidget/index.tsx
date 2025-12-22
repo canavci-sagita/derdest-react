@@ -5,7 +5,7 @@ import FullCalendar from "@fullcalendar/react";
 /* eslint-disable  @typescript-eslint/no-unused-vars */
 import listPlugin from "@fullcalendar/list";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import { Popover, PopoverProps } from "antd";
+import { Popover } from "antd";
 import { useTranslation } from "@/stores/TranslationContext";
 import AppIcon from "@/components/common/ui/AppIcon";
 import { useActivities } from "../../activities/useActivities";

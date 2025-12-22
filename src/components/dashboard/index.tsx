@@ -10,12 +10,12 @@ import LatestCasesWidget from "./LatestCasesWidget";
 const Dashboard: React.FC = () => {
   return (
     <div className="grid grid-cols-3 grid-rows-2 gap-3">
-      {/* <CalendarWidget />
+      <CalendarWidget />
       <CaseTypesWidget />
       <IncomingHearingsWidget />
       <LatestCasesWidget />
       <DocumentsWidget />
-      <ClientsWidget /> */}
+      <ClientsWidget />
     </div>
   );
 };

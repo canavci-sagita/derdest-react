@@ -1,3 +1,5 @@
+"use server";
+
 import { ApiResponse, ApiResponseOf } from "@/services/common/ApiResponse";
 import { PaginatedResponse } from "@/services/common/PaginatedResponse";
 import { LookupResponse } from "@/services/common/LookupResponse";
