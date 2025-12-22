@@ -7,20 +7,7 @@ export async function generateMetadata() {
 }
 
 const HomePage: React.FC = () => {
-  return (
-    <div>
-      {/* <p>{t("lawFirm")}</p>
-      <br />
-      <p>
-        {t("Current Language")}: {currentLang.toUpperCase()}
-      </p>
-      <br />
-      <button onClick={() => switchLanguage("en")}>English</button>
-      <button onClick={() => switchLanguage("tr")}>Türkçe</button>
-      <button onClick={() => switchLanguage("et")}>Eesti</button> */}
-      <Dashboard />
-    </div>
-  );
+  return <Dashboard />;
 };
 
 export default HomePage;

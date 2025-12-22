@@ -9,7 +9,7 @@ import {
   ContractTypeGridDto,
 } from "./definitions.types";
 import { ApiResponse, ApiResponseOf } from "../common/ApiResponse";
-import { apiFetch } from "@/lib/api-fetch";
+import { apiFetchApiResponse, apiFetchPaginated } from "@/lib/api-fetch";
 
 const DEFINITIONS_ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/Definitions`;
 
@@ -21,7 +21,7 @@ const DEFINITIONS_ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/Definitions`;
 export const getAllCaseTypes = async (
   request: PaginatedRequest
 ): Promise<PaginatedResponse<CaseTypeGridDto>> => {
-  return await apiFetch(`${DEFINITIONS_ENDPOINT}/GetAllCaseTypes`, {
+  return await apiFetchPaginated(`${DEFINITIONS_ENDPOINT}/GetAllCaseTypes`, {
     method: "POST",
     body: JSON.stringify({ pagination: request }),
   });
@@ -38,7 +38,7 @@ export const getCaseType = async (
   const params = new URLSearchParams({
     id: String(id),
   });
-  return await apiFetch(
+  return await apiFetchApiResponse(
     `${DEFINITIONS_ENDPOINT}/GetCaseType?${params.toString()}`,
     {
       method: "GET",
@@ -54,7 +54,7 @@ export const getCaseType = async (
 export const addEditCaseType = async (
   data: AddEditCaseTypeDto
 ): Promise<ApiResponse> => {
-  return await apiFetch(`${DEFINITIONS_ENDPOINT}/AddEditCaseType`, {
+  return await apiFetchApiResponse(`${DEFINITIONS_ENDPOINT}/AddEditCaseType`, {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -66,7 +66,7 @@ export const addEditCaseType = async (
  * @returns A promise that resolves to the API response.
  */
 export const deleteCaseType = async (id: number): Promise<ApiResponse> => {
-  return await apiFetch(`${DEFINITIONS_ENDPOINT}/DeleteCaseType`, {
+  return await apiFetchApiResponse(`${DEFINITIONS_ENDPOINT}/DeleteCaseType`, {
     method: "POST",
     body: JSON.stringify({ id }),
   });
@@ -80,10 +80,13 @@ export const deleteCaseType = async (id: number): Promise<ApiResponse> => {
 export const getAllContractTypes = async (
   request: PaginatedRequest
 ): Promise<PaginatedResponse<ContractTypeGridDto>> => {
-  return await apiFetch(`${DEFINITIONS_ENDPOINT}/GetAllContractTypes`, {
-    method: "POST",
-    body: JSON.stringify({ pagination: request }),
-  });
+  return await apiFetchPaginated(
+    `${DEFINITIONS_ENDPOINT}/GetAllContractTypes`,
+    {
+      method: "POST",
+      body: JSON.stringify({ pagination: request }),
+    }
+  );
 };
 
 /**
@@ -97,7 +100,7 @@ export const getContractType = async (
   const params = new URLSearchParams({
     id: String(id),
   });
-  return await apiFetch(
+  return await apiFetchApiResponse(
     `${DEFINITIONS_ENDPOINT}/GetContractType?${params.toString()}`,
     {
       method: "GET",
@@ -113,10 +116,13 @@ export const getContractType = async (
 export const addEditContractType = async (
   data: AddEditContractTypeDto
 ): Promise<ApiResponse> => {
-  return await apiFetch(`${DEFINITIONS_ENDPOINT}/AddEditContractType`, {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
+  return await apiFetchApiResponse(
+    `${DEFINITIONS_ENDPOINT}/AddEditContractType`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
 };
 
 /**
@@ -125,8 +131,11 @@ export const addEditContractType = async (
  * @returns A promise that resolves to the API response.
  */
 export async function deleteContractType(id: number): Promise<ApiResponse> {
-  return await apiFetch(`${DEFINITIONS_ENDPOINT}/DeleteContractType`, {
-    method: "POST",
-    body: JSON.stringify({ id }),
-  });
+  return await apiFetchApiResponse(
+    `${DEFINITIONS_ENDPOINT}/DeleteContractType`,
+    {
+      method: "POST",
+      body: JSON.stringify({ id }),
+    }
+  );
 }

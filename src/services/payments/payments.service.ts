@@ -1,6 +1,6 @@
 "use server";
 
-import { apiFetch } from "@/lib/api-fetch";
+import { apiFetchApiResponse } from "@/lib/api-fetch";
 import { TokenResponse } from "../auth/auth.types";
 import { ApiResponseOf } from "../common/ApiResponse";
 import {
@@ -20,7 +20,7 @@ const PAYMENTS_ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/Payments`;
 export const verifyPayment = async (
   request: VerifyPaymentRequest
 ): Promise<ApiResponseOf<TokenResponse>> => {
-  return await apiFetch(`${PAYMENTS_ENDPOINT}/VerifyPayment`, {
+  return await apiFetchApiResponse(`${PAYMENTS_ENDPOINT}/VerifyPayment`, {
     method: "POST",
     body: JSON.stringify(request),
   });
@@ -34,7 +34,7 @@ export const verifyPayment = async (
 export const buyCredits = async (
   request: BuyCreditsRequest
 ): Promise<ApiResponseOf<string>> => {
-  return await apiFetch(`${PAYMENTS_ENDPOINT}/BuyCredits`, {
+  return await apiFetchApiResponse(`${PAYMENTS_ENDPOINT}/BuyCredits`, {
     method: "POST",
     body: JSON.stringify(request),
   });
@@ -46,7 +46,7 @@ export const buyCredits = async (
 export const getAllPayments = async (): Promise<
   ApiResponseOf<InvoiceDto[]>
 > => {
-  return await apiFetch(`${PAYMENTS_ENDPOINT}/GetAllPayments`, {
+  return await apiFetchApiResponse(`${PAYMENTS_ENDPOINT}/GetAllPayments`, {
     method: "GET",
   });
 };

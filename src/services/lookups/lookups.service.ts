@@ -1,6 +1,6 @@
 "use server";
 
-import { apiFetch } from "@/lib/api-fetch";
+import { apiFetchLookup } from "@/lib/api-fetch";
 import { LookupResponse } from "../common/LookupResponse";
 import { CountryLookupResponse, TimelineLookupResponse } from "./lookups.types";
 
@@ -11,7 +11,7 @@ const LOOKUPS_ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/Lookups`;
  * @returns A promise that resolves to the LookupResponse.
  */
 export const getAllCompanyTypes = async (): Promise<LookupResponse[]> => {
-  return await apiFetch(`${LOOKUPS_ENDPOINT}/GetAllCompanyTypes`, {
+  return await apiFetchLookup(`${LOOKUPS_ENDPOINT}/GetAllCompanyTypes`, {
     method: "GET",
   });
 };
@@ -21,9 +21,11 @@ export const getAllCompanyTypes = async (): Promise<LookupResponse[]> => {
  * @returns A promise that resolves to the LookupResponse.
  */
 export const getAllCountries = async (): Promise<CountryLookupResponse[]> => {
-  return await apiFetch(`${LOOKUPS_ENDPOINT}/GetAllCountries`, {
+  const response = await apiFetchLookup(`${LOOKUPS_ENDPOINT}/GetAllCountries`, {
     method: "GET",
   });
+
+  return response as CountryLookupResponse[];
 };
 
 /**
@@ -37,7 +39,7 @@ export const getAllCities = async (
   const params = new URLSearchParams({
     countryId: String(countryId),
   });
-  return await apiFetch(
+  return await apiFetchLookup(
     `${LOOKUPS_ENDPOINT}/GetAllCities?${params.toString()}`,
     {
       method: "GET",
@@ -50,7 +52,7 @@ export const getAllCities = async (
  * @returns A promise that resolves to the LookupResponse.
  */
 export const getAllCaseTypesForLookup = async (): Promise<LookupResponse[]> => {
-  return await apiFetch(`${LOOKUPS_ENDPOINT}/GetAllCaseTypesForLookup`, {
+  return await apiFetchLookup(`${LOOKUPS_ENDPOINT}/GetAllCaseTypesForLookup`, {
     method: "GET",
   });
 };
@@ -62,9 +64,12 @@ export const getAllCaseTypesForLookup = async (): Promise<LookupResponse[]> => {
 export const getAllContractTypesForLookup = async (): Promise<
   LookupResponse[]
 > => {
-  return await apiFetch(`${LOOKUPS_ENDPOINT}/GetAllContractTypesForLookup`, {
-    method: "GET",
-  });
+  return await apiFetchLookup(
+    `${LOOKUPS_ENDPOINT}/GetAllContractTypesForLookup`,
+    {
+      method: "GET",
+    }
+  );
 };
 
 /**
@@ -85,7 +90,7 @@ export const getAllPetitionTypesForLookup = async (
     params.append("mainPetitionTypeId", String(mainPetitionTypeId));
   }
 
-  return await apiFetch(
+  return await apiFetchLookup(
     `${LOOKUPS_ENDPOINT}/GetAllPetitionTypesForLookup?${params.toString()}`,
     {
       method: "GET",
@@ -98,7 +103,7 @@ export const getAllPetitionTypesForLookup = async (
  * @returns A promise that resolves to the LookupResponse.
  */
 export const getAllClientsForLookup = async (): Promise<LookupResponse[]> => {
-  return await apiFetch(`${LOOKUPS_ENDPOINT}/GetAllClientsForLookup`, {
+  return await apiFetchLookup(`${LOOKUPS_ENDPOINT}/GetAllClientsForLookup`, {
     method: "GET",
   });
 };
@@ -114,12 +119,14 @@ export const getAllTimelinesForLookup = async (
   const params = new URLSearchParams({
     caseId: String(caseId),
   });
-  return await apiFetch(
+  const response = await apiFetchLookup(
     `${LOOKUPS_ENDPOINT}/GetAllTimelinesForLookup?${params.toString()}`,
     {
       method: "GET",
     }
   );
+
+  return response as TimelineLookupResponse[];
 };
 
 /**
@@ -133,7 +140,7 @@ export const getAllEvidencesForLookup = async (
   const params = new URLSearchParams({
     caseId: String(caseId),
   });
-  return await apiFetch(
+  return await apiFetchLookup(
     `${LOOKUPS_ENDPOINT}/GetAllEvidencesForLookup?${params.toString()}`,
     {
       method: "GET",
@@ -148,7 +155,7 @@ export const getAllEvidencesForLookup = async (
 export const getAllPartyTypesForLookup = async (): Promise<
   LookupResponse[]
 > => {
-  return await apiFetch(`${LOOKUPS_ENDPOINT}/GetAllPartyTypesForLookup`, {
+  return await apiFetchLookup(`${LOOKUPS_ENDPOINT}/GetAllPartyTypesForLookup`, {
     method: "GET",
   });
 };
@@ -158,7 +165,7 @@ export const getAllPartyTypesForLookup = async (): Promise<
  * @returns A promise that resolves to the LookupResponse.
  */
 export const getAllApprovalStatuses = async (): Promise<LookupResponse[]> => {
-  return await apiFetch(`${LOOKUPS_ENDPOINT}/GetAllApprovalStatuses`, {
+  return await apiFetchLookup(`${LOOKUPS_ENDPOINT}/GetAllApprovalStatuses`, {
     method: "GET",
   });
 };
@@ -170,9 +177,12 @@ export const getAllApprovalStatuses = async (): Promise<LookupResponse[]> => {
 export const getAllDocumentTypesForLookup = async (): Promise<
   LookupResponse[]
 > => {
-  return await apiFetch(`${LOOKUPS_ENDPOINT}/GetAllDocumentTypesForLookup`, {
-    method: "GET",
-  });
+  return await apiFetchLookup(
+    `${LOOKUPS_ENDPOINT}/GetAllDocumentTypesForLookup`,
+    {
+      method: "GET",
+    }
+  );
 };
 
 /**
@@ -180,7 +190,7 @@ export const getAllDocumentTypesForLookup = async (): Promise<
  * @returns A promise that resolves to the LookupResponse.
  */
 export const getAllLawFirmsForLookup = async (): Promise<LookupResponse[]> => {
-  return await apiFetch(`${LOOKUPS_ENDPOINT}/GetAllLawFirmsForLookup`, {
+  return await apiFetchLookup(`${LOOKUPS_ENDPOINT}/GetAllLawFirmsForLookup`, {
     method: "GET",
   });
 };
@@ -195,7 +205,7 @@ export const getAllRoles = async (
   const params = new URLSearchParams({
     forSingleUser: String(forSingleUser),
   });
-  return await apiFetch(
+  return await apiFetchLookup(
     `${LOOKUPS_ENDPOINT}/GetAllRoles?${params.toString()}`,
     {
       method: "GET",
@@ -208,7 +218,7 @@ export const getAllRoles = async (
  * @returns A promise that resolves to the LookupResponse.
  */
 export const getAllLanguages = async (): Promise<LookupResponse[]> => {
-  return await apiFetch(`${LOOKUPS_ENDPOINT}/GetAllLanguages`, {
+  return await apiFetchLookup(`${LOOKUPS_ENDPOINT}/GetAllLanguages`, {
     method: "GET",
   });
 };

@@ -71,7 +71,7 @@ export default async function RootLayout({
                 initialCompactMenu={initialCompactMenu}
               >
                 <App>
-                  <SignalRManager />
+                  {/* <SignalRManager /> */}
                   <LayoutWrapper navigation={<NavigationMenu />}>
                     {children}
                   </LayoutWrapper>

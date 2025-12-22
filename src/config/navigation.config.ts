@@ -51,12 +51,14 @@ export const navigationMenu: NavigationEntry[] = [
         icon: "LayoutPanelTop",
         path: "/admin/definitions/case-types",
         title: "caseTypes",
+        roles: [ROLE_CONSTANTS.SUPER_ADMIN],
       },
       {
         type: "link",
         icon: "LayoutPanelLeft",
         path: "/admin/definitions/contract-types",
         title: "contractTypes",
+        roles: [ROLE_CONSTANTS.SUPER_ADMIN],
       },
       // {
       //   type: "link",
@@ -94,12 +96,14 @@ export const navigationMenu: NavigationEntry[] = [
     icon: "CalendarDays",
     path: "/activities",
     title: "calendar",
+    roles: ["*"],
   },
   {
     type: "link",
     icon: "Album",
     path: "/cases",
     title: "cases",
+    roles: ["*"],
     // badge: 4
   },
   {
@@ -107,24 +111,28 @@ export const navigationMenu: NavigationEntry[] = [
     icon: "BookMarked",
     path: "/clients",
     title: "clients",
+    roles: ["*"],
   },
   {
     type: "link",
     icon: "HardDrive",
     path: "/reports",
     title: "reports",
+    roles: ["*"],
     subItems: [
       {
         type: "link",
         icon: "LayoutPanelTop",
         path: "/reports/cases",
         title: "cases",
+        roles: ["*"],
       },
       {
         type: "link",
         icon: "LayoutPanelLeft",
         path: "/reports/clients",
         title: "clients",
+        roles: ["*"],
       },
     ],
   },

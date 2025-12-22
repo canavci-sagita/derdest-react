@@ -1,6 +1,6 @@
 "use server";
 
-import { apiFetch } from "@/lib/api-fetch";
+import { apiFetchApiResponse } from "@/lib/api-fetch";
 import { ApiResponseOf } from "../common/ApiResponse";
 import { CreditOptionsResponse, StripeProductDto } from "./products.types";
 
@@ -13,9 +13,12 @@ const PRODUCTS_ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/Products`;
 export const getAllSubscriptionPlans = async (): Promise<
   ApiResponseOf<StripeProductDto[]>
 > => {
-  return await apiFetch(`${PRODUCTS_ENDPOINT}/GetAllSubscriptionPlans`, {
-    method: "GET",
-  });
+  return await apiFetchApiResponse(
+    `${PRODUCTS_ENDPOINT}/GetAllSubscriptionPlans`,
+    {
+      method: "GET",
+    }
+  );
 };
 
 /**
@@ -25,7 +28,7 @@ export const getAllSubscriptionPlans = async (): Promise<
 export const getCreditOptions = async (): Promise<
   ApiResponseOf<CreditOptionsResponse[]>
 > => {
-  return await apiFetch(`${PRODUCTS_ENDPOINT}/GetCreditOptions`, {
+  return await apiFetchApiResponse(`${PRODUCTS_ENDPOINT}/GetCreditOptions`, {
     method: "GET",
   });
 };

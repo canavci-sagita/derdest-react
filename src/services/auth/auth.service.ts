@@ -14,9 +14,49 @@ import {
   VerifyUserRequest,
 } from "./auth.types";
 import { cookies } from "next/headers";
-import { apiFetch } from "@/lib/api-fetch";
+import { apiFetchApiResponse } from "@/lib/api-fetch";
 
 const AUTH_ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/auth`;
+
+export const setRefreshToken = async (response: Response): Promise<void> => {
+  const setCookieHeader = response.headers.get("set-cookie");
+  if (!setCookieHeader) {
+    return;
+  }
+
+  let refreshToken = "";
+  let refreshExpires: Date | undefined = undefined;
+
+  const parts = setCookieHeader.split(";");
+
+  const tokenKey = `${COOKIE_CONSTANTS.REFRESH_TOKEN}=`;
+  const tokenPart = parts.find((p) => p.trim().startsWith(tokenKey));
+
+  if (tokenPart) {
+    refreshToken = tokenPart.trim().substring(tokenKey.length);
+  }
+
+  const expiresPart = parts.find((p) =>
+    p.trim().toLowerCase().startsWith("expires=")
+  );
+
+  if (expiresPart) {
+    const dateStr = expiresPart.trim().substring("expires=".length);
+    refreshExpires = new Date(dateStr);
+  }
+
+  if (refreshToken) {
+    const cookieStore = await cookies();
+
+    cookieStore.set(COOKIE_CONSTANTS.REFRESH_TOKEN, refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      expires: refreshExpires,
+    });
+  }
+};
 
 /**
  * Calls the backend API to authenticate a user.
@@ -32,55 +72,16 @@ export const signIn = async (
     body: JSON.stringify(credentials),
   });
 
-  const setCookieHeader = response.headers.get("set-cookie");
-  let refreshToken = "";
-  let refreshExpires: Date | undefined = undefined;
-
-  if (setCookieHeader) {
-    const parts = setCookieHeader.split(";");
-    const tokenPart = parts.find((p: string) =>
-      p.trim().startsWith(`${COOKIE_CONSTANTS.REFRESH_TOKEN}=`)
-    );
-    if (tokenPart) {
-      refreshToken = tokenPart.split("=")[1];
-    }
-    const expiresPart = parts.find((p: string) =>
-      p.trim().toLowerCase().startsWith("expires=")
-    );
-    if (expiresPart) {
-      refreshExpires = new Date(expiresPart.split("=")[1]);
-    }
-  }
-  if (refreshToken) {
-    const cookieStore = await cookies();
-    cookieStore.set(COOKIE_CONSTANTS.REFRESH_TOKEN, refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      expires: refreshExpires,
-    });
-  }
+  await setRefreshToken(response);
 
   return await response.json();
 };
 
-/**
- * Calls the backend API to refresh an expired authentication token.
- * @param currentToken The expired JWT.
- * @returns A promise that resolves to the new sign-in response (with a new token), or null on failure.
- */
-export const refreshToken = async (
-  token: string,
-  cookieHeader: string | null
-): Promise<ApiResponseOf<SignInResponse> | null> => {
-  return await apiFetch(`${AUTH_ENDPOINT}/refreshToken`, {
-    skipSession: true, //NOTE: If we don't specify this, than it goes infinite loop.
+export const refreshToken = async (headers: Headers) => {
+  return await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/RefreshToken`, {
     method: "POST",
-    headers: {
-      Cookie: cookieHeader || "",
-    },
-    body: JSON.stringify({ token: token }),
+    credentials: "include",
+    headers: headers,
   });
 };
 
@@ -92,7 +93,7 @@ export const refreshToken = async (
 export const signUp = async (
   request: SignUpRequest
 ): Promise<ApiResponseOf<string>> => {
-  return await apiFetch(`${AUTH_ENDPOINT}/SignUp`, {
+  return await apiFetchApiResponse(`${AUTH_ENDPOINT}/SignUp`, {
     method: "POST",
     body: JSON.stringify(request),
   });
@@ -106,7 +107,7 @@ export const signUp = async (
 export const verifyUser = async (
   request: VerifyUserRequest
 ): Promise<ApiResponseOf<string>> => {
-  return await apiFetch(`${AUTH_ENDPOINT}/Verify`, {
+  return await apiFetchApiResponse(`${AUTH_ENDPOINT}/Verify`, {
     method: "POST",
     body: JSON.stringify(request),
   });
@@ -120,7 +121,7 @@ export const verifyUser = async (
 export const resendVerificationCode = async (
   token: string
 ): Promise<ApiResponseOf<string>> => {
-  return await apiFetch(`${AUTH_ENDPOINT}/ResendVerificationCode`, {
+  return await apiFetchApiResponse(`${AUTH_ENDPOINT}/ResendVerificationCode`, {
     method: "POST",
     body: JSON.stringify({ token }),
   });
@@ -132,7 +133,7 @@ export const resendVerificationCode = async (
 export const changePassword = async (
   request: ChangePasswordRequest
 ): Promise<ApiResponse> => {
-  return await apiFetch(`${AUTH_ENDPOINT}/ChangePassword`, {
+  return await apiFetchApiResponse(`${AUTH_ENDPOINT}/ChangePassword`, {
     method: "POST",
     body: JSON.stringify(request),
   });
@@ -144,7 +145,7 @@ export const changePassword = async (
 export const verifyInvitation = async (
   data: VerifyInvitationRequest
 ): Promise<ApiResponseOf<VerifyInvitationResponse>> => {
-  return await apiFetch(`${AUTH_ENDPOINT}/VerifyInvitation`, {
+  return await apiFetchApiResponse(`${AUTH_ENDPOINT}/VerifyInvitation`, {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -156,7 +157,7 @@ export const verifyInvitation = async (
 export const completeInvitation = async (
   data: CompleteInvitationRequest
 ): Promise<ApiResponseOf<TokenResponse>> => {
-  return await apiFetch(`${AUTH_ENDPOINT}/CompleteInvitation`, {
+  return await apiFetchApiResponse(`${AUTH_ENDPOINT}/CompleteInvitation`, {
     method: "POST",
     body: JSON.stringify(data),
   });

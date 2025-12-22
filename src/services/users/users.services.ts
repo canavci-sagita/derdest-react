@@ -16,7 +16,7 @@ import {
   UserProfileSummaryDto,
 } from "./users.types";
 import { SubscriptionDto } from "../payments/payments.types";
-import { apiFetch } from "@/lib/api-fetch";
+import { apiFetchApiResponse, apiFetchPaginated } from "@/lib/api-fetch";
 
 const USERS_ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/Users`;
 
@@ -27,7 +27,7 @@ const USERS_ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/Users`;
 export const getUserProfile = async (): Promise<
   ApiResponseOf<AddEditUserProfileDto>
 > => {
-  return await apiFetch(`${USERS_ENDPOINT}/GetUserProfile`, {
+  return await apiFetchApiResponse(`${USERS_ENDPOINT}/GetUserProfile`, {
     method: "GET",
   });
 };
@@ -38,7 +38,7 @@ export const getUserProfile = async (): Promise<
 export const updateUserProfile = async (
   profileData: AddEditUserProfileDto
 ): Promise<ApiResponse> => {
-  return await apiFetch(`${USERS_ENDPOINT}/UpdateUserProfile`, {
+  return await apiFetchApiResponse(`${USERS_ENDPOINT}/UpdateUserProfile`, {
     method: "POST",
     body: JSON.stringify(profileData),
   });
@@ -51,9 +51,12 @@ export const updateUserProfile = async (
 export const getUserLanguagePreferences = async (): Promise<
   ApiResponseOf<AddEditLanguageDto>
 > => {
-  return await apiFetch(`${USERS_ENDPOINT}/GetUserLanguagePreferences`, {
-    method: "GET",
-  });
+  return await apiFetchApiResponse(
+    `${USERS_ENDPOINT}/GetUserLanguagePreferences`,
+    {
+      method: "GET",
+    }
+  );
 };
 
 /**
@@ -66,7 +69,7 @@ export const getAllUsers = async (
   const { pageNumber, pageSize, orderBy, ...filter } = request;
   const pagination = { pageNumber, pageSize, orderBy };
 
-  return await apiFetch(`${USERS_ENDPOINT}/GetAllUsers`, {
+  return await apiFetchPaginated(`${USERS_ENDPOINT}/GetAllUsers`, {
     method: "POST",
     body: JSON.stringify({
       filter: filter,
@@ -85,7 +88,7 @@ export const changeActiveStatus = async (
   appUserId: number,
   isActive: boolean
 ): Promise<ApiResponse> => {
-  return await apiFetch(`${USERS_ENDPOINT}/ChangeActiveStatus`, {
+  return await apiFetchApiResponse(`${USERS_ENDPOINT}/ChangeActiveStatus`, {
     method: "POST",
     body: JSON.stringify({ appUserId, isActive }),
   });
@@ -101,10 +104,13 @@ export const changeEmailConfirmationStatus = async (
   appUserId: number,
   emailConfirmed: boolean
 ): Promise<ApiResponse> => {
-  return await apiFetch(`${USERS_ENDPOINT}/ChangeEmailConfirmationStatus`, {
-    method: "POST",
-    body: JSON.stringify({ appUserId, emailConfirmed }),
-  });
+  return await apiFetchApiResponse(
+    `${USERS_ENDPOINT}/ChangeEmailConfirmationStatus`,
+    {
+      method: "POST",
+      body: JSON.stringify({ appUserId, emailConfirmed }),
+    }
+  );
 };
 
 /**
@@ -118,7 +124,7 @@ export const getUserProfileSummary = async (
   const params = new URLSearchParams({
     appUserId: String(appUserId),
   });
-  return await apiFetch(
+  return await apiFetchApiResponse(
     `${USERS_ENDPOINT}/GetUserProfileSummary?${params.toString()}`,
     {
       method: "GET",
@@ -135,9 +141,12 @@ export const getUser = async (
   const params = new URLSearchParams({
     appUserId: String(appUserId),
   });
-  return await apiFetch(`${USERS_ENDPOINT}/GetUser?${params.toString()}`, {
-    method: "GET",
-  });
+  return await apiFetchApiResponse(
+    `${USERS_ENDPOINT}/GetUser?${params.toString()}`,
+    {
+      method: "GET",
+    }
+  );
 };
 
 /**
@@ -147,7 +156,7 @@ export const getUser = async (
 export const addEditUser = async (
   data: AddEditUserDto
 ): Promise<ApiResponseOf<number>> => {
-  return await apiFetch(`${USERS_ENDPOINT}/AddEditUser`, {
+  return await apiFetchApiResponse(`${USERS_ENDPOINT}/AddEditUser`, {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -162,7 +171,7 @@ export const getRoleOrAssignments = async (
   const params = new URLSearchParams({
     appUserId: String(appUserId),
   });
-  return await apiFetch(
+  return await apiFetchApiResponse(
     `${USERS_ENDPOINT}/GetRoleOrAssignments?${params.toString()}`,
     {
       method: "GET",
@@ -180,7 +189,7 @@ export const getRoleOrAssignments = async (
 export const getCredits = async (): Promise<
   ApiResponseOf<CreditBalanceResponse>
 > => {
-  return await apiFetch(`${USERS_ENDPOINT}/GetCredits`, {
+  return await apiFetchApiResponse(`${USERS_ENDPOINT}/GetCredits`, {
     method: "GET",
     cache: "no-store",
   });
@@ -192,7 +201,7 @@ export const getCredits = async (): Promise<
 export const getSubscription = async (): Promise<
   ApiResponseOf<SubscriptionDto>
 > => {
-  return await apiFetch(`${USERS_ENDPOINT}/GetSubscription`, {
+  return await apiFetchApiResponse(`${USERS_ENDPOINT}/GetSubscription`, {
     method: "GET",
     cache: "no-store",
   });
@@ -202,7 +211,7 @@ export const getSubscription = async (): Promise<
  * Cancels current user's subscription.
  */
 export const cancelSubscription = async (): Promise<ApiResponse> => {
-  return await apiFetch(`${USERS_ENDPOINT}/CancelSubscription`, {
+  return await apiFetchApiResponse(`${USERS_ENDPOINT}/CancelSubscription`, {
     method: "POST",
   });
 };
@@ -214,7 +223,7 @@ export const cancelSubscription = async (): Promise<ApiResponse> => {
 export const changeSubscription = async (
   newPriceId: string
 ): Promise<ApiResponse> => {
-  return await apiFetch(`${USERS_ENDPOINT}/ChangeSubscription`, {
+  return await apiFetchApiResponse(`${USERS_ENDPOINT}/ChangeSubscription`, {
     method: "POST",
     body: JSON.stringify({ newPriceId }),
   });
@@ -226,7 +235,7 @@ export const changeSubscription = async (
 export const subscribe = async (
   request: SubscribeRequest
 ): Promise<ApiResponseOf<string>> => {
-  return await apiFetch(`${USERS_ENDPOINT}/Subscribe`, {
+  return await apiFetchApiResponse(`${USERS_ENDPOINT}/Subscribe`, {
     method: "POST",
     body: JSON.stringify(request),
   });
@@ -238,7 +247,7 @@ export const subscribe = async (
 export const inviteUser = async (
   request: InviteUserRequest
 ): Promise<ApiResponse> => {
-  return await apiFetch(`${USERS_ENDPOINT}/InviteUser`, {
+  return await apiFetchApiResponse(`${USERS_ENDPOINT}/InviteUser`, {
     method: "POST",
     body: JSON.stringify(request),
   });
@@ -254,7 +263,7 @@ export const getAllTenantUsers = async (
   const { pageNumber, pageSize, orderBy, ...filter } = request;
   const pagination = { pageNumber, pageSize, orderBy };
 
-  return await apiFetch(`${USERS_ENDPOINT}/GetAllTenantUsers`, {
+  return await apiFetchPaginated(`${USERS_ENDPOINT}/GetAllTenantUsers`, {
     method: "POST",
     body: JSON.stringify({
       filter: filter,
@@ -267,7 +276,7 @@ export const getAllTenantUsers = async (
  * Sends an invitation to a user to join the tenant.
  */
 export const reinviteUser = async (appUserId: number): Promise<ApiResponse> => {
-  return await apiFetch(`${USERS_ENDPOINT}/ReinviteUser`, {
+  return await apiFetchApiResponse(`${USERS_ENDPOINT}/ReinviteUser`, {
     method: "POST",
     body: JSON.stringify({ appUserId }),
   });

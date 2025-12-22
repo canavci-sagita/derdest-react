@@ -9,7 +9,11 @@ import {
   GetAllClientsRequest,
 } from "./clients.types";
 import { ApiResponse, ApiResponseOf } from "../common/ApiResponse";
-import { apiFetch } from "@/lib/api-fetch";
+import {
+  apiFetchApiResponse,
+  apiFetchBlob,
+  apiFetchPaginated,
+} from "@/lib/api-fetch";
 
 const CLIENTS_ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/Clients`;
 
@@ -25,7 +29,7 @@ export const getAllClients = async (
   const { pageNumber, pageSize, orderBy, ...filter } = request;
   const pagination = { pageNumber, pageSize, orderBy };
 
-  return await apiFetch(`${CLIENTS_ENDPOINT}/GetAllClients`, {
+  return await apiFetchPaginated(`${CLIENTS_ENDPOINT}/GetAllClients`, {
     method: "POST",
     body: JSON.stringify({
       filter: filter,
@@ -43,9 +47,12 @@ export const getClient = async (
   id: number
 ): Promise<ApiResponseOf<AddEditClientDto>> => {
   const params = new URLSearchParams({ id: String(id) });
-  return await apiFetch(`${CLIENTS_ENDPOINT}/GetClient?${params.toString()}`, {
-    method: "GET",
-  });
+  return await apiFetchApiResponse(
+    `${CLIENTS_ENDPOINT}/GetClient?${params.toString()}`,
+    {
+      method: "GET",
+    }
+  );
 };
 
 /**
@@ -56,7 +63,7 @@ export const getClient = async (
 export const addEditClient = async (
   data: AddEditClientDto
 ): Promise<ApiResponseOf<number>> => {
-  return await apiFetch(`${CLIENTS_ENDPOINT}/AddEditClient`, {
+  return await apiFetchApiResponse(`${CLIENTS_ENDPOINT}/AddEditClient`, {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -68,7 +75,7 @@ export const addEditClient = async (
  * @returns A promise that resolves to the API response.
  */
 export const deleteClient = async (id: number): Promise<ApiResponse> => {
-  return await apiFetch(`${CLIENTS_ENDPOINT}/DeleteClient`, {
+  return await apiFetchApiResponse(`${CLIENTS_ENDPOINT}/DeleteClient`, {
     method: "POST",
     body: JSON.stringify({ id }),
   });
@@ -85,7 +92,7 @@ export const getAllContractFiles = async (
   const params = new URLSearchParams({
     clientId: String(clientId),
   });
-  return await apiFetch(
+  return await apiFetchApiResponse(
     `${CLIENTS_ENDPOINT}/GetAllContractFiles?${params.toString()}`,
     {
       method: "GET",
@@ -101,10 +108,13 @@ export const getAllContractFiles = async (
 export const uploadAndVerifyContractFile = async (
   request: ContractFileUploadRequest
 ): Promise<ApiResponseOf<ContractFileDto>> => {
-  return await apiFetch(`${CLIENTS_ENDPOINT}/UploadAndVerifyContractFile`, {
-    method: "POST",
-    body: JSON.stringify(request),
-  });
+  return await apiFetchApiResponse(
+    `${CLIENTS_ENDPOINT}/UploadAndVerifyContractFile`,
+    {
+      method: "POST",
+      body: JSON.stringify(request),
+    }
+  );
 };
 
 /**
@@ -117,7 +127,7 @@ export const deleteContractFile = async (
   clientId: number,
   contractTypeId: number
 ): Promise<ApiResponse> => {
-  return await apiFetch(`${CLIENTS_ENDPOINT}/DeleteContractFile`, {
+  return await apiFetchApiResponse(`${CLIENTS_ENDPOINT}/DeleteContractFile`, {
     method: "POST",
     body: JSON.stringify({ clientId, contractTypeId }),
   });
@@ -137,7 +147,7 @@ export const downloadContractFile = async (
     clientId: String(clientId),
     contractTypeId: String(contractTypeId),
   });
-  return await apiFetch(
+  return await apiFetchBlob(
     `${CLIENTS_ENDPOINT}/DownloadContractFile?${params.toString()}`,
     {
       method: "GET",

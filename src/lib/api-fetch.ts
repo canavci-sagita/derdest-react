@@ -1,13 +1,10 @@
-"use server";
-
-import { COOKIE_CONSTANTS } from "@/lib/constants/cookie.constants";
+import { ApiResponse, ApiResponseOf } from "@/services/common/ApiResponse";
+import { PaginatedResponse } from "@/services/common/PaginatedResponse";
+import { LookupResponse } from "@/services/common/LookupResponse";
 import { cookies } from "next/headers";
-import { HEADER_CONSTANTS } from "@/lib/constants/header.constants";
-import { getSession } from "@/lib/session";
-
-interface ApiFetchOptions extends RequestInit {
-  skipSession?: boolean;
-}
+import { COOKIE_CONSTANTS } from "./constants/cookie.constants";
+import { HEADER_CONSTANTS } from "./constants/header.constants";
+import { getAuthenticatedUser } from "./session";
 
 const getLanguage = async () => {
   try {
@@ -18,62 +15,89 @@ const getLanguage = async () => {
   }
 };
 
-const buildHeaders = async (options: ApiFetchOptions) => {
+export async function buildHeaders(
+  init?: RequestInit
+): Promise<Record<string, string>> {
   const headers: Record<string, string> = {
-    ...(options.headers as Record<string, string>),
+    ...(init?.headers as Record<string, string>),
   };
+
+  const lang = await getLanguage();
+  headers[HEADER_CONSTANTS.ACCEPT_LANGUAGE] = lang;
 
   if (!headers[HEADER_CONSTANTS.CONTENT_TYPE]) {
     headers[HEADER_CONSTANTS.CONTENT_TYPE] = "application/json";
   }
 
-  if (!options.skipSession) {
-    const session = await getSession();
+  const cookieStore = await cookies();
+  const authToken = cookieStore.get(COOKIE_CONSTANTS.AUTH_TOKEN)?.value;
 
-    if (session) {
-      if (session.token) {
-        headers[HEADER_CONSTANTS.AUTHORIZATION] = `Bearer ${session.token}`;
-      }
+  if (authToken) {
+    headers[HEADER_CONSTANTS.AUTHORIZATION] = `Bearer ${authToken}`;
 
-      if (session.user) {
-        const tenantId = session.user?.tenantId;
-        if (tenantId) {
-          headers[HEADER_CONSTANTS.TENANT_ID] = tenantId.toString();
-        }
-      }
+    const currentUser = await getAuthenticatedUser();
+
+    if (currentUser?.tenantId) {
+      headers[HEADER_CONSTANTS.TENANT_ID] = currentUser.tenantId.toString();
     }
   }
 
-  const lang = await getLanguage();
-  headers[HEADER_CONSTANTS.ACCEPT_LANGUAGE] = lang;
-
   return headers;
+}
+
+export const apiFetchRaw = async (
+  input: RequestInfo,
+  init?: RequestInit
+): Promise<Response> => {
+  const headers = await buildHeaders(init);
+
+  return fetch(input, {
+    ...init,
+    credentials: "include",
+    cache: "no-store",
+    headers: headers,
+  });
 };
 
-export const apiFetch = async (url: string, options: ApiFetchOptions = {}) => {
-  const headers = await buildHeaders(options);
+export const apiFetchApiResponse = async <T = void>(
+  input: RequestInfo,
+  init?: RequestInit
+): Promise<ApiResponseOf<T>> => {
+  const res = await apiFetchRaw(input, init);
+  return (await res.json()) as ApiResponseOf<T>;
+};
 
-  const response = await fetch(url, {
-    ...options,
-    credentials: "include",
-    headers: headers,
-    cache: "no-store",
-  });
+export const apiFetchPaginated = async <T>(
+  input: RequestInfo,
+  init?: RequestInit
+): Promise<PaginatedResponse<T>> => {
+  const res = await apiFetchRaw(input, init);
+  return (await res.json()) as PaginatedResponse<T>;
+};
 
-  if (!response.ok) {
-    const errorBody = await response.text();
-    throw new Error(
-      `API request failed with status ${response.status}: ${errorBody}`
-    );
+export const apiFetchLookup = async (
+  input: RequestInfo,
+  init?: RequestInit
+): Promise<LookupResponse[]> => {
+  const res = await apiFetchRaw(input, init);
+  return (await res.json()) as LookupResponse[];
+};
+
+export const apiFetchBlob = async (
+  input: RequestInfo,
+  init: RequestInit
+): Promise<Blob> => {
+  const res = await apiFetchRaw(input, init);
+
+  if (!res.ok) {
+    const text = await res.text();
+    try {
+      const error = JSON.parse(text) as ApiResponse;
+      throw new Error(error.messages?.[0]);
+    } catch {
+      throw new Error("Download failed");
+    }
   }
 
-  const contentDisposition = response.headers.get("Content-Disposition");
-  const isBlob =
-    !!contentDisposition && contentDisposition.includes("attachment");
-
-  if (isBlob) {
-    return response.blob() as Promise<Blob>;
-  } else {
-    return response.json();
-  }
+  return await res.blob();
 };

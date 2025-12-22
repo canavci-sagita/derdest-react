@@ -34,7 +34,11 @@ import {
 import { ApiResponse, ApiResponseOf } from "../common/ApiResponse";
 import { FileUploadRequest } from "../common/FileUploadRequest";
 import { PromptType } from "../common/enums";
-import { apiFetch } from "@/lib/api-fetch";
+import {
+  apiFetchApiResponse,
+  apiFetchBlob,
+  apiFetchPaginated,
+} from "@/lib/api-fetch";
 
 const CASES_ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/Cases`;
 
@@ -49,7 +53,7 @@ export const getAllCasesSummary = async (
   const { pageNumber, pageSize, orderBy, ...filter } = request;
   const pagination = { pageNumber, pageSize, orderBy };
 
-  return await apiFetch(`${CASES_ENDPOINT}/GetAllCasesSummary`, {
+  return await apiFetchPaginated(`${CASES_ENDPOINT}/GetAllCasesSummary`, {
     method: "POST",
     body: JSON.stringify({
       filter: filter,
@@ -64,7 +68,7 @@ export const getAllCasesSummary = async (
  * @returns A promise that resolves to the API response.
  */
 export const deleteCase = async (id: number): Promise<ApiResponse> => {
-  return await apiFetch(`${CASES_ENDPOINT}/DeleteCase`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/DeleteCase`, {
     method: "POST",
     body: JSON.stringify({ id }),
   });
@@ -78,10 +82,13 @@ export const deleteCase = async (id: number): Promise<ApiResponse> => {
 export const createCaseFromTranscribedText = async (
   data: TranscribedCaseRequest
 ): Promise<ApiResponseOf<CaseHeaderDto[]>> => {
-  return await apiFetch(`${CASES_ENDPOINT}/CreateCaseFromTranscribedText`, {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
+  return await apiFetchApiResponse(
+    `${CASES_ENDPOINT}/CreateCaseFromTranscribedText`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
 };
 
 /**
@@ -92,7 +99,7 @@ export const createCaseFromTranscribedText = async (
 export const transcribeAudioFile = async (
   request: FileUploadRequest
 ): Promise<ApiResponseOf<string>> => {
-  return await apiFetch(`${CASES_ENDPOINT}/TranscribeAudioFile`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/TranscribeAudioFile`, {
     method: "POST",
     body: JSON.stringify(request),
   });
@@ -106,7 +113,7 @@ export const transcribeAudioFile = async (
 export const transcribeUploadedFile = async (
   request: FileUploadRequest
 ): Promise<ApiResponseOf<string>> => {
-  return await apiFetch(`${CASES_ENDPOINT}/TranscribeUploadedFile`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/TranscribeUploadedFile`, {
     method: "POST",
     body: JSON.stringify(request),
   });
@@ -120,9 +127,12 @@ export const transcribeUploadedFile = async (
 export const getCaseSummary = async (
   id: number
 ): Promise<ApiResponseOf<CaseSummaryDto>> => {
-  return await apiFetch(`${CASES_ENDPOINT}/GetCaseSummary?id=${id}`, {
-    method: "GET",
-  });
+  return await apiFetchApiResponse(
+    `${CASES_ENDPOINT}/GetCaseSummary?id=${id}`,
+    {
+      method: "GET",
+    }
+  );
 };
 
 /**
@@ -133,7 +143,7 @@ export const getCaseSummary = async (
 export const editCaseSummary = async (
   data: EditCaseSummaryDto
 ): Promise<ApiResponse> => {
-  return await apiFetch(`${CASES_ENDPOINT}/EditCaseSummary`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/EditCaseSummary`, {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -147,9 +157,12 @@ export const editCaseSummary = async (
 export const getAllTimelines = async (
   caseId: number
 ): Promise<ApiResponseOf<AddEditTimelineDto[]>> => {
-  return await apiFetch(`${CASES_ENDPOINT}/GetAllTimelines?caseId=${caseId}`, {
-    method: "GET",
-  });
+  return await apiFetchApiResponse(
+    `${CASES_ENDPOINT}/GetAllTimelines?caseId=${caseId}`,
+    {
+      method: "GET",
+    }
+  );
 };
 
 /**
@@ -168,7 +181,7 @@ export const getAllUnlinkedEvidences = async (
   if (timelineId) {
     params.append("timelineId", String(timelineId));
   }
-  return await apiFetch(
+  return await apiFetchApiResponse(
     `${CASES_ENDPOINT}/GetAllUnlinkedEvidences?${params.toString()}`,
     {
       method: "GET",
@@ -184,7 +197,7 @@ export const getAllUnlinkedEvidences = async (
 export const addEditTimeline = async (
   data: AddEditTimelineDto
 ): Promise<ApiResponseOf<number>> => {
-  return await apiFetch(`${CASES_ENDPOINT}/AddEditTimeline`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/AddEditTimeline`, {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -200,7 +213,7 @@ export const deleteTimeline = async (
   caseId: number,
   timelineId: number
 ): Promise<ApiResponse> => {
-  return await apiFetch(`${CASES_ENDPOINT}/DeleteTimeline`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/DeleteTimeline`, {
     method: "POST",
     body: JSON.stringify({ caseId, timelineId }),
   });
@@ -217,7 +230,7 @@ export const getAllEvidences = async (
   const { caseId, pageNumber, pageSize, orderBy, ...filter } = request;
   const pagination = { pageNumber, pageSize, orderBy };
 
-  return await apiFetch(`${CASES_ENDPOINT}/GetAllEvidences`, {
+  return await apiFetchPaginated(`${CASES_ENDPOINT}/GetAllEvidences`, {
     method: "POST",
     body: JSON.stringify({
       caseId: caseId,
@@ -238,9 +251,12 @@ export const getEvidence = async (
   const params = new URLSearchParams({
     id: String(id),
   });
-  return await apiFetch(`${CASES_ENDPOINT}/GetEvidence?${params.toString()}`, {
-    method: "GET",
-  });
+  return await apiFetchApiResponse(
+    `${CASES_ENDPOINT}/GetEvidence?${params.toString()}`,
+    {
+      method: "GET",
+    }
+  );
 };
 
 /**
@@ -257,7 +273,7 @@ export const getAllEvidenceFiles = async (
     caseId: String(caseId),
     evidenceId: String(evidenceId),
   });
-  return await apiFetch(
+  return await apiFetchApiResponse(
     `${CASES_ENDPOINT}/GetAllEvidenceFiles?${params.toString()}`,
     {
       method: "GET",
@@ -278,7 +294,7 @@ export const getEvidenceFileDescription = async (
     caseId: String(caseId),
     evidenceFileId: String(evidenceFileId),
   });
-  return await apiFetch(
+  return await apiFetchApiResponse(
     `${CASES_ENDPOINT}/GetEvidenceFileDescription?${params.toString()}`,
     {
       method: "GET",
@@ -294,7 +310,7 @@ export const getEvidenceFileDescription = async (
 export const addEditEvidence = async (
   data: AddEditEvidenceDto
 ): Promise<ApiResponseOf<number>> => {
-  return await apiFetch(`${CASES_ENDPOINT}/AddEditEvidence`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/AddEditEvidence`, {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -309,7 +325,7 @@ export const deleteEvidence = async (
   caseId: number,
   evidenceId: number
 ): Promise<ApiResponse> => {
-  return await apiFetch(`${CASES_ENDPOINT}/DeleteEvidence`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/DeleteEvidence`, {
     method: "POST",
     body: JSON.stringify({ caseId, evidenceId }),
   });
@@ -324,7 +340,7 @@ export const deleteEvidence = async (
 export const uploadEvidenceFile = async (
   data: UploadEvidenceFileRequest
 ): Promise<ApiResponseOf<EvidenceFileDto>> => {
-  return await apiFetch(`${CASES_ENDPOINT}/UploadEvidenceFile`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/UploadEvidenceFile`, {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -339,10 +355,13 @@ export const uploadEvidenceFile = async (
 export const setEvidenceFileDescription = async (
   data: SetEvidenceFileDescriptionRequest
 ): Promise<ApiResponse> => {
-  return await apiFetch(`${CASES_ENDPOINT}/SetEvidenceFileDescription`, {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
+  return await apiFetchApiResponse(
+    `${CASES_ENDPOINT}/SetEvidenceFileDescription`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
 };
 
 /**
@@ -357,7 +376,7 @@ export const deleteEvidenceFile = async (
   evidenceId: number,
   fileName: string
 ): Promise<ApiResponse> => {
-  return await apiFetch(`${CASES_ENDPOINT}/DeleteEvidenceFile`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/DeleteEvidenceFile`, {
     method: "POST",
     body: JSON.stringify({ caseId, evidenceId, fileName }),
   });
@@ -380,7 +399,7 @@ export const downloadEvidenceFile = async (
     evidenceId: String(evidenceId),
     fileName: fileName,
   });
-  return await apiFetch(
+  return await apiFetchBlob(
     `${CASES_ENDPOINT}/DownloadEvidenceFile?${params.toString()}`,
     {
       method: "GET",
@@ -397,7 +416,7 @@ export const downloadEvidenceFile = async (
 export const transcribeEvidenceFile = async (
   data: TranscribeEvidenceFileRequest
 ): Promise<ApiResponseOf<string>> => {
-  return await apiFetch(`${CASES_ENDPOINT}/TranscribeEvidenceFile`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/TranscribeEvidenceFile`, {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -414,7 +433,7 @@ export const getAllParties = async (
   const { caseId, pageNumber, pageSize, orderBy, ...filter } = request;
   const pagination = { pageNumber, pageSize, orderBy };
 
-  return await apiFetch(`${CASES_ENDPOINT}/GetAllParties`, {
+  return await apiFetchPaginated(`${CASES_ENDPOINT}/GetAllParties`, {
     method: "POST",
     body: JSON.stringify({
       caseId: caseId,
@@ -435,9 +454,12 @@ export const getParty = async (
   const params = new URLSearchParams({
     id: String(id),
   });
-  return await apiFetch(`${CASES_ENDPOINT}/GetParty?${params.toString()}`, {
-    method: "GET",
-  });
+  return await apiFetchApiResponse(
+    `${CASES_ENDPOINT}/GetParty?${params.toString()}`,
+    {
+      method: "GET",
+    }
+  );
 };
 
 /**
@@ -448,7 +470,7 @@ export const getParty = async (
 export const addEditParty = async (
   data: AddEditPartyDto
 ): Promise<ApiResponseOf<number>> => {
-  return await apiFetch(`${CASES_ENDPOINT}/AddEditParty`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/AddEditParty`, {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -464,7 +486,7 @@ export const deleteParty = async (
   caseId: number,
   partyId: number
 ): Promise<ApiResponse> => {
-  return await apiFetch(`${CASES_ENDPOINT}/DeleteParty`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/DeleteParty`, {
     method: "POST",
     body: JSON.stringify({ caseId, partyId }),
   });
@@ -480,7 +502,7 @@ export const getAllPetitions = async (
   const { caseId, pageNumber, pageSize, orderBy, ...filter } = request;
   const pagination = { pageNumber, pageSize, orderBy };
 
-  return await apiFetch(`${CASES_ENDPOINT}/GetAllPetitions`, {
+  return await apiFetchPaginated(`${CASES_ENDPOINT}/GetAllPetitions`, {
     method: "POST",
     body: JSON.stringify({
       caseId: caseId,
@@ -498,7 +520,7 @@ export const getAllPetitions = async (
 export const createPetition = async (
   data: CreatePetitionRequest
 ): Promise<ApiResponseOf<CreatePetitionResponse>> => {
-  return await apiFetch(`${CASES_ENDPOINT}/CreatePetition`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/CreatePetition`, {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -512,7 +534,7 @@ export const createPetition = async (
 export const editPetition = async (
   data: EditPetitionRequest
 ): Promise<ApiResponse> => {
-  return await apiFetch(`${CASES_ENDPOINT}/EditPetition`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/EditPetition`, {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -529,7 +551,7 @@ export const getDefaultPrompt = async (
   const params = new URLSearchParams({
     promptType: promptType.toString(),
   });
-  return await apiFetch(
+  return await apiFetchApiResponse(
     `${CASES_ENDPOINT}/GetDefaultPrompt?${params.toString()}`,
     {
       method: "GET",
@@ -548,7 +570,7 @@ export const getCurrentPetitionTypeId = async (
   const params = new URLSearchParams({
     caseId: String(caseId),
   });
-  return await apiFetch(
+  return await apiFetchApiResponse(
     `${CASES_ENDPOINT}/GetCurrentPetitionTypeId?${params.toString()}`,
     {
       method: "GET",
@@ -570,9 +592,12 @@ export const getPetition = async (
     caseId: String(caseId),
     petitionId: String(petitionId),
   });
-  return await apiFetch(`${CASES_ENDPOINT}/GetPetition?${params.toString()}`, {
-    method: "GET",
-  });
+  return await apiFetchApiResponse(
+    `${CASES_ENDPOINT}/GetPetition?${params.toString()}`,
+    {
+      method: "GET",
+    }
+  );
 };
 
 /**
@@ -588,7 +613,7 @@ export const downloadPetitionFile = async (
     petitionId: String(request.petitionId),
     petitionFileType: String(request.fileType),
   });
-  return await apiFetch(
+  return await apiFetchBlob(
     `${CASES_ENDPOINT}/DownloadPetitionFile?${params.toString()}`,
     {
       method: "GET",
@@ -607,7 +632,7 @@ export const downloadPetitionAttachmentFile = async (
   const params = new URLSearchParams({
     caseId: String(caseId),
   });
-  return await apiFetch(
+  return await apiFetchBlob(
     `${CASES_ENDPOINT}/DownloadPetitionAttachmentFile?${params.toString()}`,
     {
       method: "GET",
@@ -625,7 +650,7 @@ export const getAllDocuments = async (
 ): Promise<ApiResponseOf<DocumentDto[]>> => {
   const { caseId, documentTypeId, ...filter } = request;
 
-  return await apiFetch(`${CASES_ENDPOINT}/GetAllDocuments`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/GetAllDocuments`, {
     method: "POST",
     body: JSON.stringify({
       caseId: caseId,
@@ -649,7 +674,7 @@ export const downloadDocument = async (
     caseId: String(caseId),
     documentId: String(documentId),
   });
-  return await apiFetch(
+  return await apiFetchBlob(
     `${CASES_ENDPOINT}/DownloadDocument?${params.toString()}`,
     {
       method: "GET",
@@ -667,7 +692,7 @@ export const deleteDocument = async (
   caseId: number,
   documentId: number
 ): Promise<ApiResponse> => {
-  return await apiFetch(`${CASES_ENDPOINT}/DeleteDocument`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/DeleteDocument`, {
     method: "POST",
     body: JSON.stringify({ caseId, documentId }),
   });
@@ -683,7 +708,7 @@ export const scanDocument = async (
   caseId: number,
   documentId: number
 ): Promise<ApiResponseOf<ScanDocumentResponse>> => {
-  return await apiFetch(`${CASES_ENDPOINT}/ScanDocument`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/ScanDocument`, {
     method: "POST",
     body: JSON.stringify({ caseId, documentId }),
   });
@@ -697,7 +722,7 @@ export const scanDocument = async (
 export const uploadDocument = async (
   data: UploadDocumentRequest
 ): Promise<ApiResponseOf<DocumentDto>> => {
-  return await apiFetch(`${CASES_ENDPOINT}/UploadDocument`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/UploadDocument`, {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -713,7 +738,7 @@ export const changeDocumentType = async (
   documentId: number,
   documentTypeId: number | null
 ): Promise<ApiResponseOf<ScanDocumentResponse>> => {
-  return await apiFetch(`${CASES_ENDPOINT}/ChangeDocumentType`, {
+  return await apiFetchApiResponse(`${CASES_ENDPOINT}/ChangeDocumentType`, {
     method: "POST",
     body: JSON.stringify({ documentId, documentTypeId }),
   });

@@ -7,7 +7,7 @@ export interface ApiResponse {
 }
 
 export interface ApiResponseOf<T> extends ApiResponse {
-  result: T | null;
+  result?: T | null;
 }
 
 // 2. Create a factory object to build these plain objects

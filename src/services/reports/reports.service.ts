@@ -1,4 +1,4 @@
-import { apiFetch } from "@/lib/api-fetch";
+import { apiFetchApiResponse } from "@/lib/api-fetch";
 import { ApiResponseOf } from "../common/ApiResponse";
 import {
   CaseTypeStatDto,
@@ -16,7 +16,7 @@ const REPORTS_ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/Reports`;
 export const getRecentDocuments = async (): Promise<
   ApiResponseOf<RecentDocumentDto[]>
 > => {
-  return await apiFetch(`${REPORTS_ENDPOINT}/GetRecentDocuments`, {
+  return await apiFetchApiResponse(`${REPORTS_ENDPOINT}/GetRecentDocuments`, {
     method: "GET",
   });
 };
@@ -28,7 +28,7 @@ export const getRecentDocuments = async (): Promise<
 export const getClientStats = async (): Promise<
   ApiResponseOf<ClientStatsDto>
 > => {
-  return await apiFetch(`${REPORTS_ENDPOINT}/GetClientStats`, {
+  return await apiFetchApiResponse(`${REPORTS_ENDPOINT}/GetClientStats`, {
     method: "GET",
   });
 };
@@ -40,7 +40,7 @@ export const getClientStats = async (): Promise<
 export const getCaseTypeStats = async (): Promise<
   ApiResponseOf<CaseTypeStatDto[]>
 > => {
-  return await apiFetch(`${REPORTS_ENDPOINT}/GetCaseTypeStats`, {
+  return await apiFetchApiResponse(`${REPORTS_ENDPOINT}/GetCaseTypeStats`, {
     method: "GET",
   });
 };
@@ -52,7 +52,7 @@ export const getCaseTypeStats = async (): Promise<
 export const getLatestCases = async (): Promise<
   ApiResponseOf<LatestCaseItemDto[]>
 > => {
-  return await apiFetch(`${REPORTS_ENDPOINT}/GetLatestCases`, {
+  return await apiFetchApiResponse(`${REPORTS_ENDPOINT}/GetLatestCases`, {
     method: "GET",
   });
 };

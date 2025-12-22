@@ -34,16 +34,6 @@ import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export async function getSignalRTokenAction(): Promise<string> {
-  try {
-    const session = await getSession();
-    return session?.token || "";
-  } catch (error) {
-    console.error("Failed to get token for SignalR:", error);
-    return "";
-  }
-}
-
 export type SignInFormState = ActionFormState<SignInRequest>;
 
 export const signInAction = async (
@@ -243,8 +233,9 @@ export const changePasswordAction = async (
 };
 
 export const signOutAction = async () => {
-  const cookiesObj = await cookies();
-  cookiesObj.delete(COOKIE_CONSTANTS.AUTH_TOKEN);
+  const cookieStore = await cookies();
+  cookieStore.delete(COOKIE_CONSTANTS.AUTH_TOKEN);
+  cookieStore.delete(COOKIE_CONSTANTS.REFRESH_TOKEN);
 
   redirect("/auth/sign-in");
 };

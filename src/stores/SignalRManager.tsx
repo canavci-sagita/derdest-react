@@ -4,21 +4,31 @@ import { SIGNALR_CONSTANTS } from "@/lib/constants/signalr.constants";
 import { useEffect, useRef } from "react";
 import * as signalR from "@microsoft/signalr";
 import { eventBus } from "@/lib/eventBus";
-import { getSignalRTokenAction } from "@/actions/auth.actions";
 
 export const SignalRManager: React.FC = () => {
   const connectionRef = useRef<signalR.HubConnection | null>(null);
+  const isConnectingRef = useRef(false);
 
   useEffect(() => {
-    if (connectionRef.current) return;
+    if (connectionRef.current || isConnectingRef.current) return;
 
-    const createAndStartConnection = async () => {
+    isConnectingRef.current = true;
+
+    const startConnection = async () => {
       try {
         const connection = new signalR.HubConnectionBuilder()
           .withUrl(SIGNALR_CONSTANTS.NOTIFICATION_HUB_URL, {
             accessTokenFactory: async () => {
-              const token = await getSignalRTokenAction();
-              return token;
+              const res = await fetch("/api/auth/signalr-token", {
+                credentials: "include",
+              });
+
+              if (!res.ok) {
+                throw new Error("No access token for SignalR");
+              }
+
+              const data = await res.json();
+              return data.token;
             },
           })
           .withAutomaticReconnect()
@@ -38,23 +48,20 @@ export const SignalRManager: React.FC = () => {
           eventBus.emit("chat", message);
         });
 
-        // connection.on("ReceiveAlert", (alert) => {
-        //   eventBus.emit("alert", alert);
-        // });
-
         await connection.start();
-      } catch (e) {
-        console.error("SignalR connection error: ", e);
+      } catch (err) {
+        console.error("SignalR connection failed:", err);
+      } finally {
+        isConnectingRef.current = false;
       }
     };
 
-    createAndStartConnection();
+    startConnection();
 
     return () => {
-      if (connectionRef.current) {
-        connectionRef.current.stop();
-        connectionRef.current = null;
-      }
+      connectionRef.current?.stop();
+      connectionRef.current = null;
+      isConnectingRef.current = false;
     };
   }, []);
 

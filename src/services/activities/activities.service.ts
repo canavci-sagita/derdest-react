@@ -1,4 +1,4 @@
-import { apiFetch } from "@/lib/api-fetch";
+import { apiFetchApiResponse } from "@/lib/api-fetch";
 import { ApiResponseOf } from "../common/ApiResponse";
 import {
   ActivityCalendarItemDto,
@@ -23,7 +23,7 @@ export const getAllActivities = async (
   if (request.endDate) {
     params.append("endDate", request.endDate.toISOString());
   }
-  return await apiFetch(
+  return await apiFetchApiResponse(
     `${ACTIVITIES_ENDPOINT}/GetAllActivities?${params.toString()}`,
     {
       method: "GET",
