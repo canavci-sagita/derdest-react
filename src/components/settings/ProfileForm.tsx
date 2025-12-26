@@ -79,8 +79,11 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
     value: unknown
   ) => {
     setData((prev) => ({
-      ...prev,
-      address: { ...prev.address, [key]: value } as AddEditAddressDto,
+      ...(prev || {}),
+      address: {
+        ...(prev?.address ?? {}),
+        [key]: value,
+      } as AddEditAddressDto,
     }));
     clearFieldError(`address.${String(key)}`);
   };

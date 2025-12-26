@@ -17,12 +17,12 @@ import { AddEditPhoneNoDto } from "@/services/common/AddEditPhoneNoDto";
 interface Step1_AccountInformationProps {
   data: SignUpRequest;
   errors: FieldErrors<SignUpRequest> | undefined;
+  countries: CountryLookupResponse[];
+  clearFieldError: (name: string) => void;
   onChange: (
     key: keyof SignUpRequest,
     value: string | number | boolean | AddEditPhoneNoDto | null
   ) => void;
-  clearFieldError: (name: string) => void;
-  countries: CountryLookupResponse[];
 }
 
 const Step1_AccountInformation: React.FC<Step1_AccountInformationProps> = ({
@@ -222,7 +222,7 @@ const Step1_AccountInformation: React.FC<Step1_AccountInformationProps> = ({
           <FormPhone
             value={data.phoneNo}
             className={twMerge(errors?.phoneNo && "border-red-500")}
-            onChange={(v) => handleInputChange("companyTitle", v)}
+            onChange={(v) => handleInputChange("phoneNo", v)}
           />
           <FormError errors={errors?.phoneNo} />
         </div>

@@ -36,9 +36,14 @@ import LoadingIcon from "../common/ui/LoadingIcon";
 interface UserTableProps {
   initialData: PaginatedResponse<UserGridDto | TenantUserGridDto>;
   role: string;
+  userLimit?: number | null;
 }
 
-const UserTable: React.FC<UserTableProps> = ({ initialData, role }) => {
+const UserTable: React.FC<UserTableProps> = ({
+  initialData,
+  role,
+  userLimit,
+}) => {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const router = useRouter();
@@ -430,19 +435,32 @@ const UserTable: React.FC<UserTableProps> = ({ initialData, role }) => {
           <div className="text-lg font-bold text-primary mx-auto underline underline-offset-3 decoration-4 decoration-theme-2">
             {t("users")}
           </div>
-          <Button
-            size="sm"
-            variant="primary"
-            localizedLabel={
-              role === ROLE_CONSTANTS.SUPER_ADMIN ? "addUser" : "inviteUser"
+          <Tooltip
+            title={
+              role == ROLE_CONSTANTS.SUPER_ADMIN
+                ? null
+                : !userLimit
+                ? t("inviteUser.userLimitReached")
+                : t("invitationLeft", { invitationCount: userLimit })
             }
-            icon={
-              role === ROLE_CONSTANTS.SUPER_ADMIN ? "CirclePlus" : "UserPlus"
-            }
-            iconDirection="left"
-            iconClassName="stroke-[1.5]"
-            onClick={handleAddOrInvite}
-          />
+          >
+            <Button
+              size="sm"
+              variant="primary"
+              disabled={!userLimit}
+              localizedLabel={
+                role === ROLE_CONSTANTS.SUPER_ADMIN
+                  ? "addUser"
+                  : t("inviteUser") + (userLimit ? ` (${userLimit})` : "")
+              }
+              icon={
+                role === ROLE_CONSTANTS.SUPER_ADMIN ? "CirclePlus" : "UserPlus"
+              }
+              iconDirection="left"
+              iconClassName="stroke-[1.5]"
+              onClick={handleAddOrInvite}
+            />
+          </Tooltip>
         </DataTable.Header>
         <DataTable.Grid
           columns={mergedColumns}

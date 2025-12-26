@@ -1,3 +1,4 @@
+import PetitionTemplates from "@/components/settings/PetitionTemplates";
 import { getTranslationsCached } from "@/lib/i18n/server";
 
 export async function generateMetadata() {
@@ -6,7 +7,7 @@ export async function generateMetadata() {
 }
 
 const TemplatesPage: React.FC = () => {
-  return <div></div>;
+  return <PetitionTemplates />;
 };
 
 export default TemplatesPage;

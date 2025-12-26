@@ -25,6 +25,8 @@ import {
   inviteUser,
   getAllTenantUsers,
   reinviteUser,
+  getAllPetitionTemplates,
+  uploadPetitionTemplateFile,
 } from "@/services/users/users.services";
 import {
   AddEditUserDto,
@@ -36,9 +38,11 @@ import {
   GetAllUsersRequest,
   InviteUserRequest,
   inviteUserSchema,
+  PetitionTemplateDto,
   RoleAssignmentDto,
   SubscribeRequest,
   TenantUserGridDto,
+  UploadPetitionTemplateFileRequest,
   UserGridDto,
   UserProfileSummaryDto,
 } from "@/services/users/users.types";
@@ -383,6 +387,32 @@ export const reinviteUserAction = async (
 ): Promise<ApiResponse> => {
   try {
     return await reinviteUser(appUserId);
+  } catch (error: unknown) {
+    return getErrorResponse(error);
+  }
+};
+
+export const getAllPetitionTemplatesAction = async (
+  petitionTypeId: number
+): Promise<ApiResponseOf<PetitionTemplateDto[]>> => {
+  try {
+    return await getAllPetitionTemplates(petitionTypeId);
+  } catch (error: unknown) {
+    return getErrorResponse(error);
+  }
+};
+
+export const uploadPetitionTemplateFileAction = async (
+  data: UploadPetitionTemplateFileRequest
+): Promise<ApiResponseOf<PetitionTemplateDto>> => {
+  try {
+    const response = await uploadPetitionTemplateFile(data);
+
+    if (response.isSuccess) {
+      revalidatePath(`/settings/templates`);
+    }
+
+    return response;
   } catch (error: unknown) {
     return getErrorResponse(error);
   }

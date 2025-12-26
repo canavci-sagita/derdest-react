@@ -7,6 +7,7 @@ import {
   addEditPhoneNoSchema,
 } from "../common/AddEditPhoneNoDto";
 import { ACCOUNT_TYPE_CONSTANTS } from "@/lib/constants/account-type.constants";
+import { FileUploadRequest } from "../common/FileUploadRequest";
 
 export interface AddEditUserDto {
   id?: number;
@@ -352,3 +353,16 @@ export type TenantUserGridDto = {
   isInvitationPending: boolean;
   isActive: boolean;
 };
+
+export type PetitionTemplateDto = {
+  id: number;
+  petitionTypeId: number;
+  fileName: string;
+  fileSize: number;
+  isDefault: boolean;
+  createdOn: Date;
+};
+
+export interface UploadPetitionTemplateFileRequest extends FileUploadRequest {
+  petitionTypeId: number;
+}

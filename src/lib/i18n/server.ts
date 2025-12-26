@@ -8,7 +8,7 @@ import { cache } from "react";
  */
 export async function getTranslations() {
   const cookieStore = await cookies();
-  const lang = cookieStore.get(COOKIE_CONSTANTS.LANGUAGE)?.value || "tr"; // Default language
+  const lang = cookieStore.get(COOKIE_CONSTANTS.LANGUAGE)?.value || "en"; // Default language
 
   const translations = await fetchTranslations(lang);
 

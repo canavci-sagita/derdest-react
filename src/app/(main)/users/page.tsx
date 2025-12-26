@@ -1,3 +1,4 @@
+import { getUserLimitAction } from "@/actions/products.actions";
 import UserTable from "@/components/users/UserTable";
 import { ROLE_CONSTANTS } from "@/lib/constants/role.constants";
 import { getTranslationsCached } from "@/lib/i18n/server";
@@ -37,6 +38,7 @@ const UsersPage: React.FC = async () => {
     orderBy: ["fullName asc"],
   });
 
+  const userLimit = await getUserLimitAction();
   return (
     <div className="grid grid-cols-12 gap-y-10 gap-x-6">
       <div className="col-span-12">
@@ -45,6 +47,7 @@ const UsersPage: React.FC = async () => {
             <UserTable
               initialData={initialData}
               role={currentUser?.role || ROLE_CONSTANTS.USER}
+              userLimit={userLimit.result}
             />
           </div>
         </div>

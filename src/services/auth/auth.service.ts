@@ -100,6 +100,20 @@ export const signUp = async (
 };
 
 /**
+ * Calls the API to validate signup form values.
+ * @param request The SignUpRequest DTO.
+ * @returns ApiResponse of encrypted verification token
+ */
+export const validateSignUpForm = async (
+  request: SignUpRequest
+): Promise<ApiResponse> => {
+  return await apiFetchApiResponse(`${AUTH_ENDPOINT}/ValidateSignUpForm`, {
+    method: "POST",
+    body: JSON.stringify(request),
+  });
+};
+
+/**
  * Calls the API to verify a new user's account.
  * @param request The verification request DTO.
  * @returns ApiResponse of stripe checkout session response.

@@ -32,3 +32,13 @@ export const getCreditOptions = async (): Promise<
     method: "GET",
   });
 };
+
+/**
+ * Fetches the user limit of the current subscription plan.
+ * @returns number
+ */
+export const getUserLimit = async (): Promise<ApiResponseOf<number>> => {
+  return await apiFetchApiResponse(`${PRODUCTS_ENDPOINT}/GetUserLimit`, {
+    method: "GET",
+  });
+};

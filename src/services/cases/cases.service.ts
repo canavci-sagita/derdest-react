@@ -319,7 +319,7 @@ export const addEditEvidence = async (
 /**
  * Calls the API to delete an evidence by its ID and related case ID.
  * @param data The request object containing the file details.
- * @returns A promise that resolves to the API response of uploaded file data.
+ * @returns A promise that resolves to the API response.
  */
 export const deleteEvidence = async (
   caseId: number,

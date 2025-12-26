@@ -10,6 +10,7 @@ import {
   resendVerificationCode,
   signIn,
   signUp,
+  validateSignUpForm,
   verifyInvitation,
   verifyUser,
 } from "@/services/auth/auth.service";
@@ -140,6 +141,43 @@ export const signUpAction = async (
       status: "success",
       message: response.messages,
       result: response.result,
+    };
+  } catch (error: unknown) {
+    const message = getErrorMessage(error);
+    return { status: "error", message: message };
+  }
+};
+
+export const validateSignupFormAction = async (
+  prevState: SignUpFormState,
+  data: SignUpRequest
+): Promise<SignUpFormState> => {
+  try {
+    const localizedSchema = await createLocalizedSchema(signUpSchema);
+    const validation = localizedSchema.safeParse(data);
+
+    if (!validation.success) {
+      return {
+        status: "error",
+        errors: validation.error.format(),
+        fields: data,
+      };
+    }
+
+    const response = await validateSignUpForm(validation.data);
+
+    if (!response.isSuccess) {
+      return {
+        status: "error",
+        message: response.messages,
+        errors: undefined,
+        fields: data,
+      };
+    }
+
+    return {
+      status: "success",
+      message: response.messages,
     };
   } catch (error: unknown) {
     const message = getErrorMessage(error);

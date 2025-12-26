@@ -20,7 +20,8 @@ import Step1_AccountInformation from "./Step1_AccountInformation";
 import { useCountries } from "@/lib/hooks/tanstack/useCountries";
 import { StripeProductDto } from "@/services/products/products.types";
 import { getAllSubscriptionPlansAction } from "@/actions/products.actions";
-import { signUpAction } from "@/actions/auth.actions";
+import { signUpAction, validateSignupFormAction } from "@/actions/auth.actions";
+import { validateSignUpForm } from "@/services/auth/auth.service";
 
 const emptySignUpRequest: SignUpRequest = {
   isCompany: false,
@@ -56,6 +57,7 @@ const SignUpForm: React.FC = () => {
   const { displayState, setDisplayState, clearFieldError, clearFormMessage } =
     useActionForm(serverState, initialState);
 
+  const [isValidating, setIsValidating] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [data, setData] = useState<SignUpRequest>(emptySignUpRequest);
   const [singleUserPlans, setSingleUserPlans] = useState<StripeProductDto[]>(
@@ -82,7 +84,7 @@ const SignUpForm: React.FC = () => {
     startTransition(() => formAction(validation.data));
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     //NOTE: To prevent auto-fill validation failure.
     if (formRef.current) {
       const formData = new FormData(formRef.current);
@@ -107,7 +109,21 @@ const SignUpForm: React.FC = () => {
       return;
     }
 
-    setCurrentStep(2);
+    setIsValidating(true);
+    const apiValidationResponse = await validateSignupFormAction(
+      displayState,
+      data
+    );
+    setIsValidating(false);
+
+    if (apiValidationResponse.status === "success") {
+      setCurrentStep(2);
+    } else if (apiValidationResponse.status === "error") {
+      setDisplayState({
+        message: apiValidationResponse.message,
+        status: "error",
+      });
+    }
   };
 
   const handleBack = () => {
@@ -229,6 +245,7 @@ const SignUpForm: React.FC = () => {
               iconDirection="right"
               icon="CircleArrowRight"
               onClick={handleNext}
+              loading={isValidating}
             />
           </div>
         )}

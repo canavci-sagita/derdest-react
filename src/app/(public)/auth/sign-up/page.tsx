@@ -2,6 +2,7 @@
 
 import SignUpForm from "@/components/auth/SignUpForm";
 import { useTranslation } from "@/stores/TranslationContext";
+import Link from "next/link";
 
 const SignUpPage = () => {
   const { t } = useTranslation();
@@ -14,9 +15,12 @@ const SignUpPage = () => {
         </h3>
         <p className="mt-2 text-center text-slate-500 xl:text-left">
           {t("alreadyHaveAccount")}
-          <a href="/auth/sign-in" className="ml-2 text-primary hover:underline">
+          <Link
+            href="/auth/sign-in"
+            className="ml-2 text-primary hover:underline"
+          >
             {t("signIn")}
-          </a>
+          </Link>
         </p>
         <SignUpForm />
       </div>

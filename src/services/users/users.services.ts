@@ -9,9 +9,11 @@ import {
   CreditBalanceResponse,
   GetAllUsersRequest,
   InviteUserRequest,
+  PetitionTemplateDto,
   RoleAssignmentDto,
   SubscribeRequest,
   TenantUserGridDto,
+  UploadPetitionTemplateFileRequest,
   UserGridDto,
   UserProfileSummaryDto,
 } from "./users.types";
@@ -280,4 +282,38 @@ export const reinviteUser = async (appUserId: number): Promise<ApiResponse> => {
     method: "POST",
     body: JSON.stringify({ appUserId }),
   });
+};
+
+/**
+ * Fetches all the templates for the specific petition type.
+ */
+export const getAllPetitionTemplates = async (
+  petitionTypeId: number
+): Promise<ApiResponseOf<PetitionTemplateDto[]>> => {
+  const params = new URLSearchParams({
+    petitionTypeId: String(petitionTypeId),
+  });
+  return await apiFetchApiResponse(
+    `${USERS_ENDPOINT}/GetAllPetitionTemplates?${params.toString()}`,
+    {
+      method: "GET",
+    }
+  );
+};
+
+/**
+ * Calls the API to upload template file related to petition type.
+ * @param data The request object containing the file details.
+ * @returns A promise that resolves to the API response of uploaded file data.
+ */
+export const uploadPetitionTemplateFile = async (
+  data: UploadPetitionTemplateFileRequest
+): Promise<ApiResponseOf<PetitionTemplateDto>> => {
+  return await apiFetchApiResponse(
+    `${USERS_ENDPOINT}/UploadPetitionTemplateFile`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
 };

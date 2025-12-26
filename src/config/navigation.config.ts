@@ -7,6 +7,18 @@ export const navigationMenu: NavigationEntry[] = [
     title: "admin",
     roles: [ROLE_CONSTANTS.SUPER_ADMIN, ROLE_CONSTANTS.TENANT_ADMIN],
   },
+  {
+    type: "link",
+    icon: "Cog",
+    path: "/settings/subscriptions",
+    title: "subscriptions",
+    roles: [
+      ROLE_CONSTANTS.SUPER_ADMIN,
+      ROLE_CONSTANTS.TENANT_ADMIN,
+      ROLE_CONSTANTS.USER,
+    ],
+    routeOnly: true,
+  },
   // {
   //   type: "link",
   //   icon: "CircleGauge",

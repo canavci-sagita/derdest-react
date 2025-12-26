@@ -65,75 +65,73 @@ const ChangePasswordForm = () => {
   }, [displayState, message, setDisplayState, clearFormMessage]);
 
   return (
-    <div className="">
-      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
-          <div className="p-1.5 bg-white border border-slate-200 rounded-md shadow-sm text-slate-500">
-            <AppIcon icon="Lock" className="w-4 h-4" />
+    <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
+        <div className="p-1.5 bg-white border border-slate-200 rounded-md shadow-sm text-slate-500">
+          <AppIcon icon="Lock" className="w-4 h-4" />
+        </div>
+        <div>
+          <h3 className="text-sm font-semibold text-slate-900">
+            {t("changePassword")}
+          </h3>
+          <p className="text-xs text-slate-500 mt-0.5">
+            {t("changePassword.hint")}
+          </p>
+        </div>
+      </div>
+      <form ref={formRef} onSubmit={handleSubmit} className="p-6">
+        <div className="space-y-6 max-w-md">
+          <div>
+            <FormLabel
+              htmlFor="currentPassword"
+              localizedLabel="currentPassword"
+              required
+            />
+            <FormInput
+              id="currentPassword"
+              type="password"
+              onChange={() => clearFieldError("currentPassword")}
+            />
+            <FormError errors={displayState.errors?.currentPassword} />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-slate-900">
-              {t("changePassword")}
-            </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
-              {t("changePassword.hint")}
-            </p>
+            <FormLabel
+              htmlFor="newPassword"
+              localizedLabel="newPassword"
+              required
+            />
+            <FormInput
+              id="newPassword"
+              type="password"
+              onChange={() => clearFieldError("newPassword")}
+            />
+            <FormError errors={displayState.errors?.newPassword} />
+          </div>
+          <div>
+            <FormLabel
+              htmlFor="confirPassword"
+              localizedLabel="confirmPassword"
+              required
+            />
+            <FormInput
+              id="confirmPassword"
+              type="password"
+              onChange={() => clearFieldError("confirmPassword")}
+            />
+            <FormError errors={displayState.errors?.confirmPassword} />
+          </div>
+          <div className="pt-1">
+            <Button
+              type="submit"
+              variant="primary"
+              loading={isPending}
+              localizedLabel={isPending ? "saving" : "updatePassword"}
+              icon="Save"
+              iconDirection="left"
+            />
           </div>
         </div>
-        <form ref={formRef} onSubmit={handleSubmit} className="p-6">
-          <div className="space-y-6 max-w-md">
-            <div>
-              <FormLabel
-                htmlFor="currentPassword"
-                localizedLabel="currentPassword"
-                required
-              />
-              <FormInput
-                id="currentPassword"
-                type="password"
-                onChange={() => clearFieldError("currentPassword")}
-              />
-              <FormError errors={displayState.errors?.currentPassword} />
-            </div>
-            <div>
-              <FormLabel
-                htmlFor="newPassword"
-                localizedLabel="newPassword"
-                required
-              />
-              <FormInput
-                id="newPassword"
-                type="password"
-                onChange={() => clearFieldError("newPassword")}
-              />
-              <FormError errors={displayState.errors?.newPassword} />
-            </div>
-            <div>
-              <FormLabel
-                htmlFor="confirPassword"
-                localizedLabel="confirmPassword"
-                required
-              />
-              <FormInput
-                id="confirmPassword"
-                type="password"
-                onChange={() => clearFieldError("confirmPassword")}
-              />
-              <FormError errors={displayState.errors?.confirmPassword} />
-            </div>
-            <div className="pt-1">
-              <Button
-                type="submit"
-                variant="primary"
-                loading={isPending}
-                localizedLabel={isPending ? "saving" : "updatePassword"}
-                icon="Save"
-                iconDirection="left"
-              />
-            </div>
-          </div>
-        </form>
-      </div>
+      </form>
     </div>
   );
 };

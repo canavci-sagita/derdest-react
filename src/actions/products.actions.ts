@@ -5,6 +5,7 @@ import { ApiResponseOf } from "@/services/common/ApiResponse";
 import {
   getAllSubscriptionPlans,
   getCreditOptions,
+  getUserLimit,
 } from "@/services/products/products.service";
 import {
   CreditOptionsResponse,
@@ -26,6 +27,14 @@ export const getCreditOptionsAction = async (): Promise<
 > => {
   try {
     return await getCreditOptions();
+  } catch (error: unknown) {
+    return getErrorResponse(error);
+  }
+};
+
+export const getUserLimitAction = async (): Promise<ApiResponseOf<number>> => {
+  try {
+    return await getUserLimit();
   } catch (error: unknown) {
     return getErrorResponse(error);
   }

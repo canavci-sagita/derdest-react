@@ -2,7 +2,11 @@
 
 import { apiFetchLookup } from "@/lib/api-fetch";
 import { LookupResponse } from "../common/LookupResponse";
-import { CountryLookupResponse, TimelineLookupResponse } from "./lookups.types";
+import {
+  CountryLookupResponse,
+  PetitionTypeLookupResponse,
+  TimelineLookupResponse,
+} from "./lookups.types";
 
 const LOOKUPS_ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/Lookups`;
 
@@ -79,9 +83,9 @@ export const getAllContractTypesForLookup = async (): Promise<
  * @returns A promise that resolves to the LookupResponse.
  */
 export const getAllPetitionTypesForLookup = async (
-  caseTypeId?: number,
-  mainPetitionTypeId?: number
-): Promise<LookupResponse[]> => {
+  caseTypeId?: number | null,
+  mainPetitionTypeId?: number | null
+): Promise<PetitionTypeLookupResponse[]> => {
   const params = new URLSearchParams();
   if (caseTypeId) {
     params.append("caseTypeId", String(caseTypeId));
@@ -90,12 +94,14 @@ export const getAllPetitionTypesForLookup = async (
     params.append("mainPetitionTypeId", String(mainPetitionTypeId));
   }
 
-  return await apiFetchLookup(
+  const response = await apiFetchLookup(
     `${LOOKUPS_ENDPOINT}/GetAllPetitionTypesForLookup?${params.toString()}`,
     {
       method: "GET",
     }
   );
+
+  return response as PetitionTypeLookupResponse[];
 };
 
 /**

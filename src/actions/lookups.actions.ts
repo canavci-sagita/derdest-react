@@ -21,6 +21,7 @@ import {
 import {
   CountryLookupResponse,
   EvidenceLookupResponse,
+  PetitionTypeLookupResponse,
   TimelineLookupResponse,
 } from "@/services/lookups/lookups.types";
 
@@ -55,9 +56,9 @@ export const getAllContractTypesForLookupAction = async (): Promise<
 };
 
 export const getAllPetitionTypesForLookupAction = async (
-  caseTypeId?: number,
-  mainPetitionTypeId?: number
-): Promise<LookupResponse[]> => {
+  caseTypeId?: number | null,
+  mainPetitionTypeId?: number | null
+): Promise<PetitionTypeLookupResponse[]> => {
   return await getAllPetitionTypesForLookup(caseTypeId, mainPetitionTypeId);
 };
 
