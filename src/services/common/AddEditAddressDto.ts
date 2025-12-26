@@ -14,8 +14,8 @@ export const addEditAddressSchema = (
     addressLine2: z
       .string()
       .max(100, t("maxLength.addressLine2", { maxLength: 100 }))
-      .optional()
-      .nullable(),
+      .nullable()
+      .optional(),
     city: z.preprocess(
       (val) => val ?? "",
       isOptional

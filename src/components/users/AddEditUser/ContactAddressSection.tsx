@@ -105,7 +105,7 @@ const ContactAddressSection: React.FC<ContactAddressSectionProps> = ({
             id="addressLine2"
             name="address.addressLine2"
             type="text"
-            defaultValue={data.address?.addressLine2}
+            defaultValue={data.address?.addressLine2 || undefined}
             onBlur={(e) =>
               handleAddressInputOnBlur("addressLine2", e.target.value)
             }

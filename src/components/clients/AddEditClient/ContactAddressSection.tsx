@@ -115,7 +115,8 @@ const ContactAddressSection: React.FC<ContactAddressSectionProps> = ({
             )}
             defaultValue={
               initialData?.address?.addressLine2 ||
-              displayState.fields?.address?.addressLine2
+              displayState.fields?.address?.addressLine2 ||
+              undefined
             }
             onChange={() => clearFieldError("address.addressLine2")}
           />
