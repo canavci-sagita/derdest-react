@@ -4,6 +4,7 @@ import { apiFetchLookup } from "@/lib/api-fetch";
 import { LookupResponse } from "../common/LookupResponse";
 import {
   CountryLookupResponse,
+  LanguageLookupResponse,
   PetitionTypeLookupResponse,
   TimelineLookupResponse,
 } from "./lookups.types";
@@ -223,8 +224,10 @@ export const getAllRoles = async (
  * Fetches a list of languages from the API.
  * @returns A promise that resolves to the LookupResponse.
  */
-export const getAllLanguages = async (): Promise<LookupResponse[]> => {
-  return await apiFetchLookup(`${LOOKUPS_ENDPOINT}/GetAllLanguages`, {
+export const getAllLanguages = async (): Promise<LanguageLookupResponse[]> => {
+  const result = await apiFetchLookup(`${LOOKUPS_ENDPOINT}/GetAllLanguages`, {
     method: "GET",
   });
+
+  return result as LanguageLookupResponse[];
 };

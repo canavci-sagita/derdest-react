@@ -8,13 +8,15 @@ import TemplatesSidebar from "./TemplateSidebar";
 import { useCaseTypes } from "@/lib/hooks/tanstack/useCaseTypes";
 import { usePetitionTypes } from "@/lib/hooks/tanstack/usePetitionTypes";
 import {
+  deletePetitionTemplateAction,
   getAllPetitionTemplatesAction,
-  uploadPetitionTemplateFileAction,
+  uploadPetitionTemplateAction,
 } from "@/actions/users.actions";
 import { App } from "antd";
 import { PetitionTemplateDto } from "@/services/users/users.types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toBase64 } from "@/lib/utils/file.utils";
+import { getErrorMessage } from "@/lib/utils/error.utils";
 
 const PetitionTemplates: React.FC = () => {
   const { t } = useTranslation();
@@ -74,7 +76,7 @@ const PetitionTemplates: React.FC = () => {
         fileSize: file.size,
       };
 
-      return await uploadPetitionTemplateFileAction(request);
+      return await uploadPetitionTemplateAction(request);
     },
     onSuccess: (response) => {
       if (response.isSuccess) {
@@ -89,8 +91,27 @@ const PetitionTemplates: React.FC = () => {
         message.error(response.messages);
       }
     },
-    onError: (error: any) => {
-      message.error(error.message || t("uploadFailed"));
+    onError: (error: unknown) => {
+      message.error(getErrorMessage(error));
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await deletePetitionTemplateAction(id);
+    },
+    onSuccess: (response) => {
+      if (response.isSuccess) {
+        message.success(response.messages);
+        queryClient.invalidateQueries({
+          queryKey: ["petition-templates", selectedPetitionTypeId],
+        });
+      } else {
+        message.error(response.messages);
+      }
+    },
+    onError: (error: unknown) => {
+      message.error(getErrorMessage(error));
     },
   });
 
@@ -112,7 +133,21 @@ const PetitionTemplates: React.FC = () => {
     }
   };
 
-  const handleUploadClick = () => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== "application/pdf" && !file.name.endsWith(".docx")) {
+      message.warning(t("petitionTemplate.uploadDesc", { maxFileSize: 5 }));
+      return;
+    }
+
+    uploadMutation.mutate(file);
+
+    e.target.value = "";
+  };
+
+  const handleUpload = () => {
     if (!selectedPetitionTypeId) {
       message.warning(
         t("pleaseSelectPetitionType") ||
@@ -123,18 +158,8 @@ const PetitionTemplates: React.FC = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (/*file.type !== "application/pdf" && */ !file.name.endsWith(".docx")) {
-      message.warning(t("petitionTemplateFile.uploadDesc", { maxFileSize: 5 }));
-      return;
-    }
-
-    uploadMutation.mutate(file);
-
-    e.target.value = "";
+  const handleDelete = (id: number) => {
+    deleteMutation.mutate(id);
   };
 
   return (
@@ -180,7 +205,7 @@ const PetitionTemplates: React.FC = () => {
                 accept=".docx,.pdf,.doc"
               />
               <button
-                onClick={handleUploadClick}
+                onClick={handleUpload}
                 disabled={uploadMutation.isPending}
                 className="group relative flex flex-col items-center justify-center h-64 rounded-xl border-2 border-dashed border-slate-300 hover:border-indigo-500 hover:bg-indigo-50/50 transition-all cursor-pointer disabled:cursor-not-allowed"
               >
@@ -203,7 +228,7 @@ const PetitionTemplates: React.FC = () => {
                     : t("uploadTemplate")}
                 </span>
                 <span className="text-xs text-slate-400 mt-1">
-                  {t("petitionTemplateFile.uploadDesc", { maxFileSize: 5 })}
+                  {t("petitionTemplate.uploadDesc", { maxFileSize: 5 })}
                 </span>
               </button>
               {petitionTemplates.length > 0
@@ -213,7 +238,7 @@ const PetitionTemplates: React.FC = () => {
                       template={template}
                       onPreview={(id) => console.log("Preview", id)}
                       onDownload={(id) => console.log("Download", id)}
-                      onDelete={(id) => console.log("Delete", id)}
+                      onDelete={handleDelete}
                     />
                   ))
                 : !isLoadingTemplates && (

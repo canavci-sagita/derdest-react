@@ -15,45 +15,87 @@ import {
 } from "./auth.types";
 import { cookies } from "next/headers";
 import { apiFetchApiResponse } from "@/lib/api-fetch";
+import { HEADER_CONSTANTS } from "@/lib/constants/header.constants";
 
 const AUTH_ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/auth`;
 
+// export const setRefreshToken = async (response: Response): Promise<void> => {
+//   const setCookieHeader = response.headers.get("set-cookie");
+//   if (!setCookieHeader) {
+//     return;
+//   }
+
+//   let refreshToken = "";
+//   let refreshExpires: Date | undefined = undefined;
+
+//   const parts = setCookieHeader.split(";");
+
+//   const tokenKey = `${COOKIE_CONSTANTS.REFRESH_TOKEN}=`;
+//   const tokenPart = parts.find((p) => p.trim().startsWith(tokenKey));
+
+//   if (tokenPart) {
+//     refreshToken = tokenPart.trim().substring(tokenKey.length);
+//   }
+
+//   const expiresPart = parts.find((p) =>
+//     p.trim().toLowerCase().startsWith("expires=")
+//   );
+
+//   if (expiresPart) {
+//     const dateStr = expiresPart.trim().substring("expires=".length);
+//     refreshExpires = new Date(dateStr);
+//   }
+
+//   if (refreshToken) {
+//     const cookieStore = await cookies();
+
+//     cookieStore.set(COOKIE_CONSTANTS.REFRESH_TOKEN, refreshToken, {
+//       httpOnly: true,
+//       secure: process.env.NODE_ENV === "production",
+//       sameSite: "strict",
+//       path: "/",
+//       expires: refreshExpires,
+//     });
+//   }
+// };
+
 export const setRefreshToken = async (response: Response): Promise<void> => {
   const setCookieHeader = response.headers.get("set-cookie");
-  if (!setCookieHeader) {
-    return;
+  if (!setCookieHeader) return;
+
+  // 1. Extract the specific Refresh Token part manually
+  // This regex looks for "RefreshToken=VALUE;" ignoring other cookies
+  const tokenRegex = new RegExp(`${COOKIE_CONSTANTS.REFRESH_TOKEN}=([^;]+)`);
+  const tokenMatch = setCookieHeader.match(tokenRegex);
+
+  if (!tokenMatch) return;
+
+  const refreshToken = tokenMatch[1]; // The actual token value
+
+  // 2. Extract the Expires part (Case insensitive search)
+  // We search for "expires=" followed by anything until a semicolon OR end of string
+  const expiresRegex = /expires=([^;]+)/i;
+  const expiresMatch = setCookieHeader.match(expiresRegex);
+
+  let refreshExpires: Date | undefined;
+
+  if (expiresMatch) {
+    const dateStr = expiresMatch[1].trim(); // "Wed, 21 Oct..."
+    const parsedDate = new Date(dateStr);
+    if (!isNaN(parsedDate.getTime())) {
+      refreshExpires = parsedDate;
+    }
   }
 
-  let refreshToken = "";
-  let refreshExpires: Date | undefined = undefined;
-
-  const parts = setCookieHeader.split(";");
-
-  const tokenKey = `${COOKIE_CONSTANTS.REFRESH_TOKEN}=`;
-  const tokenPart = parts.find((p) => p.trim().startsWith(tokenKey));
-
-  if (tokenPart) {
-    refreshToken = tokenPart.trim().substring(tokenKey.length);
-  }
-
-  const expiresPart = parts.find((p) =>
-    p.trim().toLowerCase().startsWith("expires=")
-  );
-
-  if (expiresPart) {
-    const dateStr = expiresPart.trim().substring("expires=".length);
-    refreshExpires = new Date(dateStr);
-  }
-
+  // 3. Set the cookie
   if (refreshToken) {
     const cookieStore = await cookies();
-
     cookieStore.set(COOKIE_CONSTANTS.REFRESH_TOKEN, refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
-      expires: refreshExpires,
+      expires: refreshExpires, // If undefined, it becomes a session cookie
     });
   }
 };
@@ -77,12 +119,24 @@ export const signIn = async (
   return await response.json();
 };
 
-export const refreshToken = async (headers: Headers) => {
-  return await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/RefreshToken`, {
-    method: "POST",
-    credentials: "include",
-    headers: headers,
-  });
+export const refreshToken = async (headers: Headers, rawToken: string) => {
+  const cookieStore = await cookies();
+
+  const result = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/auth/RefreshToken`,
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookieStore.toString(),
+      },
+      body: JSON.stringify({
+        token: rawToken,
+      }),
+    }
+  );
+  return result;
 };
 
 /**

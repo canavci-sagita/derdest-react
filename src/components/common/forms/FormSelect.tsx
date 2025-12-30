@@ -35,6 +35,13 @@ const FormSelect: React.FC<FormSelectProps> = ({
         className={twMerge("!w-full !h-full !bg-transparent", className)}
         getPopupContainer={(triggerNode) => triggerNode.parentNode}
         loading={loading}
+        labelRender={(o) => {
+          return loading ? (
+            <span className="text-slate-400">{t("loading")}</span>
+          ) : (
+            o.label
+          );
+        }}
       />
     </div>
   );

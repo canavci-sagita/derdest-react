@@ -34,9 +34,16 @@ export async function GET() {
       `${COOKIE_CONSTANTS.REFRESH_TOKEN}=${refreshTokenValue}`
     );
 
-    const response = await refreshToken(headersForRefresh);
+    const authTokenRaw = cookieStore.get(COOKIE_CONSTANTS.AUTH_TOKEN)?.value;
+
+    if (!authTokenRaw) {
+      return NextResponse.json({}, { status: 200 });
+    }
+
+    const response = await refreshToken(headersForRefresh, authTokenRaw);
 
     if (!response.ok) {
+      console.log("Refresh failed");
       return NextResponse.json({ error: "Refresh failed" }, { status: 401 });
     }
 
@@ -46,10 +53,6 @@ export async function GET() {
       const newAccessToken = jsonResponse.result.token;
 
       const nextResponse = NextResponse.json({ token: newAccessToken });
-
-      // 5. CRITICAL: Set the new cookies on this response so the browser updates!
-      // You likely need to parse 'set-cookie' from 'response' like you did in proxy.ts
-      // Or simply set the Auth Token if your backend returned it.
 
       const decoded = jwtDecode<DecodedToken & { exp: number }>(newAccessToken);
 

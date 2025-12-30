@@ -1,5 +1,14 @@
 import { LookupResponse } from "../common/LookupResponse";
 
+export class LanguageLookupResponse extends LookupResponse {
+  code: string;
+
+  constructor(value?: number, label?: string, code?: string) {
+    super(value, label);
+    this.code = code ?? "";
+  }
+}
+
 export class PetitionTypeLookupResponse extends LookupResponse {
   templateCount: number;
 

@@ -19,6 +19,7 @@ import "dayjs/locale/tr";
 import "dayjs/locale/en";
 import "dayjs/locale/et";
 import NoDataAvailable from "../data-table/NoDataAvailable";
+import { CurrentUser } from "@/types/user.types";
 
 //TODO: Additional languages will be added here.
 const antdLocales = {
@@ -28,9 +29,11 @@ const antdLocales = {
 };
 
 const LayoutWrapper = ({
+  user,
   children,
   navigation,
 }: Readonly<{
+  user: CurrentUser | null;
   children: React.ReactNode;
   navigation: React.ReactNode;
 }>) => {
@@ -99,7 +102,7 @@ const LayoutWrapper = ({
       >
         <LeftSideBar>{navigation}</LeftSideBar>
         <LayoutPanelsContextProvider>
-          <Header />
+          <Header user={user} />
           <QuickSearchPanel />
           <NotificationsPanel />
           <SwitchAccountPanel />

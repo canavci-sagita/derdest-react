@@ -33,7 +33,7 @@ interface ProfileFormProps {
 const initialState = createFormState<AddEditUserProfileDto>();
 
 const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
-  const { t } = useTranslation();
+  const { t, switchLanguage } = useTranslation();
   const { message } = App.useApp();
 
   const {
@@ -71,6 +71,14 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
     value: unknown
   ) => {
     setData((prev) => ({ ...prev, [key]: value }));
+
+    if (key === "languageId") {
+      const code = languages.find((l) => l.value === value)?.code;
+
+      if (code) {
+        switchLanguage(code);
+      }
+    }
     clearFieldError(key);
   };
 
@@ -282,7 +290,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
                 id="country"
                 options={countries}
                 fieldNames={{ label: "label", value: "label" }}
-                value={data?.address?.country}
+                value={data?.address?.country || null}
                 showSearch
                 allowClear
                 loading={isLoadingCountries}

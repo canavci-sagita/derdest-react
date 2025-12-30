@@ -25,6 +25,9 @@ const UserMenu = () => {
       case "settings":
         router.push("/settings");
         break;
+      case "templates":
+        router.push("/settings/templates");
+        break;
       case "subscriptions":
         router.push("/settings/subscriptions");
         break;
@@ -50,6 +53,12 @@ const UserMenu = () => {
       icon: "Settings",
       key: "settings",
       label: t("settings"),
+    },
+    {
+      type: "item",
+      icon: "FileArchive",
+      key: "templates",
+      label: t("templates"),
     },
     {
       type: "item",

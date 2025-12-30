@@ -9,6 +9,7 @@ import {
   formatFileSize,
   getFileTypeFromFileName,
 } from "@/lib/utils/file.utils";
+import { Popconfirm, Tooltip } from "antd";
 
 interface TemplateCardProps {
   template: PetitionTemplateDto;
@@ -23,8 +24,9 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
   onDownload,
   onDelete,
 }) => {
-  const { currentLang } = useTranslation();
+  const { t, currentLang } = useTranslation();
   const fileType = getFileTypeFromFileName(template.fileName);
+  const isPdf = fileType.includes("pdf");
 
   return (
     <div className="group relative bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all duration-300 flex flex-col overflow-hidden">
@@ -60,35 +62,38 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
         </div>
       </div>
       <div className="p-2 bg-white border-t border-slate-100 relative z-10">
-        <div className="flex justify-between items-start mb-1">
-          <div className="flex items-center gap-2">
-            <AppIcon
-              icon={fileType === "pdf" ? "File" : "FileText"}
-              className={`w-4 h-4 ${
-                fileType === "pdf" ? "text-red-500" : "text-blue-500"
-              }`}
-            />
-            <span
-              className="w-full text-xs font-bold text-slate-600 truncate pr-3"
-              title={template.fileName}
-            >
-              {template.fileName}
-            </span>
+        <div className="flex items-center gap-2 w-full mb-2">
+          <AppIcon
+            icon={isPdf ? "File" : "FileText"}
+            className={`w-4 h-4 flex-shrink-0 ${
+              isPdf ? "text-red-500" : "text-blue-500"
+            }`}
+          />
+          <div className="min-w-0 flex-1">
+            <Tooltip title={template.fileName}>
+              <p className="text-xs font-bold text-slate-600 truncate">
+                {template.fileName}
+              </p>
+            </Tooltip>
           </div>
-          <button
-            onClick={() => onDelete(template.id)}
-            className="text-slate-400 hover:text-red-500 transition-colors"
-          >
-            <AppIcon icon="Trash2" className="w-4 h-4" />
-          </button>
         </div>
-        <div className="w-full flex justify-between">
-          <span className="text-xs text-slate-500">
+        <div className="w-full flex justify-between items-center">
+          <span className="text-xs text-slate-400">
             {formatDate(currentLang, template.createdOn, false, false)}
           </span>
-          <span className="text-slate-400 text-xs" title={template.fileName}>
-            {formatFileSize(template.fileSize)}
-          </span>
+
+          <Popconfirm
+            title={t("deleteConfirmation.title")}
+            description={t("deleteConfirmation.text")}
+            onConfirm={() => onDelete(template.id)}
+            okText={t("yes")}
+            cancelText={t("no")}
+            okButtonProps={{ danger: true }}
+          >
+            <button className="text-slate-400 hover:text-red-500 transition-colors p-1 rounded-md hover:bg-red-50">
+              <AppIcon icon="Trash2" className="w-4 h-4" />
+            </button>
+          </Popconfirm>
         </div>
       </div>
     </div>

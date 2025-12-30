@@ -341,18 +341,10 @@ export const inviteUserSchema = (
 
 export type InviteUserRequest = z.infer<ReturnType<typeof inviteUserSchema>>;
 
-export type TenantUserGridDto = {
-  id: number;
+export interface TenantUserGridDto extends UserGridDto {
   role: string;
-  nationalId?: string;
-  barRegistrationNo?: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phoneNo: string;
   isInvitationPending: boolean;
-  isActive: boolean;
-};
+}
 
 export type PetitionTemplateDto = {
   id: number;
@@ -363,6 +355,6 @@ export type PetitionTemplateDto = {
   createdOn: Date;
 };
 
-export interface UploadPetitionTemplateFileRequest extends FileUploadRequest {
+export interface UploadPetitionTemplateRequest extends FileUploadRequest {
   petitionTypeId: number;
 }

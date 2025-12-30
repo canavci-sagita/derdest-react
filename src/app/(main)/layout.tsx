@@ -16,6 +16,7 @@ import { COOKIE_CONSTANTS } from "@/lib/constants/cookie.constants";
 import NavigationMenu from "@/components/common/layout/navigation/NavigationMenu";
 import { SignalRManager } from "@/stores/SignalRManager";
 import { QueryProvider } from "@/components/providers/QueryProvider";
+import { getAuthenticatedUser } from "@/lib/session";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await getAuthenticatedUser();
+
   const lang = await getCurrentLanguage();
   let translations: Record<string, string>;
 
@@ -72,7 +75,7 @@ export default async function RootLayout({
               >
                 <App>
                   <SignalRManager />
-                  <LayoutWrapper navigation={<NavigationMenu />}>
+                  <LayoutWrapper user={user} navigation={<NavigationMenu />}>
                     {children}
                   </LayoutWrapper>
                 </App>

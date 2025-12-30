@@ -224,8 +224,10 @@ const UserTable: React.FC<UserTableProps> = ({
         sorter: true,
         render: (isActive: boolean, record) => {
           const currentChecked = statusUpdates[record.id]?.isActive ?? isActive;
+          var tenantRecord = record as TenantUserGridDto;
           return (
             <Switch
+              disabled={tenantRecord.isInvitationPending}
               size="small"
               checkedChildren={
                 <AppIcon icon="Check" className="text-white w-4 h-4 stroke-2" />
@@ -234,13 +236,14 @@ const UserTable: React.FC<UserTableProps> = ({
                 <AppIcon icon="X" className="text-white w-4 h-4 stroke-2" />
               }
               checked={currentChecked}
-              loading={loadingSwitchId === `status-${record.id}`}
-              onChange={(checked) => handleStatusChange(record.id, checked)}
+              loading={loadingSwitchId === `status-${tenantRecord.id}`}
+              onChange={(checked) =>
+                handleStatusChange(tenantRecord.id, checked)
+              }
             />
           );
         },
       },
-      {},
     ];
 
     const superAdminColumns: TableProps<UserGridDto>["columns"] = [
@@ -447,7 +450,7 @@ const UserTable: React.FC<UserTableProps> = ({
             <Button
               size="sm"
               variant="primary"
-              disabled={!userLimit}
+              disabled={role !== ROLE_CONSTANTS.SUPER_ADMIN && !userLimit}
               localizedLabel={
                 role === ROLE_CONSTANTS.SUPER_ADMIN
                   ? "addUser"

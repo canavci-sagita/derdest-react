@@ -2,10 +2,10 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { getAllLanguagesAction } from "@/actions/lookups.actions";
-import { LookupResponse } from "@/services/common/LookupResponse";
+import { LanguageLookupResponse } from "@/services/lookups/lookups.types";
 
 export const useLanguages = () => {
-  return useQuery<LookupResponse[], Error>({
+  return useQuery<LanguageLookupResponse[], Error>({
     queryKey: ["languages"],
     queryFn: () => getAllLanguagesAction(),
   });

@@ -661,7 +661,7 @@ export const getAllDocuments = async (
 };
 
 /**
- * Calls the API to download the specified dcoument file of the case.
+ * Calls the API to download the specified document file of the case.
  * @param caseId The ID of the case.
  * @param documentId The ID of the document.
  * @returns A promise that resolves to a Blob on success, or an ApiResponse on failure.

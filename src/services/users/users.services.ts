@@ -13,12 +13,16 @@ import {
   RoleAssignmentDto,
   SubscribeRequest,
   TenantUserGridDto,
-  UploadPetitionTemplateFileRequest,
+  UploadPetitionTemplateRequest,
   UserGridDto,
   UserProfileSummaryDto,
 } from "./users.types";
 import { SubscriptionDto } from "../payments/payments.types";
-import { apiFetchApiResponse, apiFetchPaginated } from "@/lib/api-fetch";
+import {
+  apiFetchApiResponse,
+  apiFetchBlob,
+  apiFetchPaginated,
+} from "@/lib/api-fetch";
 
 const USERS_ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/Users`;
 
@@ -306,14 +310,44 @@ export const getAllPetitionTemplates = async (
  * @param data The request object containing the file details.
  * @returns A promise that resolves to the API response of uploaded file data.
  */
-export const uploadPetitionTemplateFile = async (
-  data: UploadPetitionTemplateFileRequest
+export const uploadPetitionTemplate = async (
+  data: UploadPetitionTemplateRequest
 ): Promise<ApiResponseOf<PetitionTemplateDto>> => {
-  return await apiFetchApiResponse(
-    `${USERS_ENDPOINT}/UploadPetitionTemplateFile`,
+  return await apiFetchApiResponse(`${USERS_ENDPOINT}/UploadPetitionTemplate`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+/**
+ * Calls the API to delete a template petition file by ID.
+ * @param caseId The ID of the template file.
+ * @returns A promise that resolves to the API response.
+ */
+export const deletePetitionTemplate = async (
+  petitionTemplateId: number
+): Promise<ApiResponse> => {
+  return await apiFetchApiResponse(`${USERS_ENDPOINT}/DeletePetitionTemplate`, {
+    method: "POST",
+    body: JSON.stringify({ petitionTemplateId }),
+  });
+};
+
+/**
+ * Calls the API to download the specified template file..
+ * @param documentId The ID of the template file.
+ * @returns A promise that resolves to a Blob on success, or an ApiResponse on failure.
+ */
+export const downloadPetitionTemplate = async (
+  petitionTemplateId: number
+): Promise<Blob | ApiResponse> => {
+  const params = new URLSearchParams({
+    documentId: String(petitionTemplateId),
+  });
+  return await apiFetchBlob(
+    `${USERS_ENDPOINT}/DownloadPetitionTemplate?${params.toString()}`,
     {
-      method: "POST",
-      body: JSON.stringify(data),
+      method: "GET",
     }
   );
 };

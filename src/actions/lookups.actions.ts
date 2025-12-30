@@ -21,6 +21,7 @@ import {
 import {
   CountryLookupResponse,
   EvidenceLookupResponse,
+  LanguageLookupResponse,
   PetitionTypeLookupResponse,
   TimelineLookupResponse,
 } from "@/services/lookups/lookups.types";
@@ -110,6 +111,8 @@ export const getAllRolesAction = async (
   return await getAllRoles(forSingleUser);
 };
 
-export const getAllLanguagesAction = async (): Promise<LookupResponse[]> => {
+export const getAllLanguagesAction = async (): Promise<
+  LanguageLookupResponse[]
+> => {
   return await getAllLanguages();
 };

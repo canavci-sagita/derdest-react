@@ -6,10 +6,15 @@ import UserMenu from "./UserMenu";
 import { useSidebarMenu } from "@/stores/SidebarMenuContext";
 import { fullscreenUtils } from "@/lib/utils/fullscreen.utils";
 import { useLayoutPanels } from "@/stores/LayoutPanelsContext";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CreditsWidget from "./Credits/CreditsWidget";
+import { CurrentUser } from "@/types/user.types";
 
-const Header = () => {
+interface HeaderProps {
+  user: CurrentUser | null;
+}
+
+const Header: React.FC<HeaderProps> = ({ user }) => {
   const { setActiveMobileMenu } = useSidebarMenu();
   const { setQuickSearchPanel, setNotificationsPanel } = useLayoutPanels();
 
@@ -41,10 +46,6 @@ const Header = () => {
         ])}
       >
         <div className="flex items-center w-full h-full transition-[padding] ease-in-out duration-300 px-5">
-          {/* <div className="flex flex-col">
-            <div className="font-medium text-xs">Arnold Schwarzenegger</div>
-            <div className="text-xs opacity-70 text-xs">Backend Engineer</div>
-          </div> */}
           <div className="flex items-center gap-1 xl:hidden">
             <a
               href=""
@@ -99,6 +100,16 @@ const Header = () => {
                 />
               </a>
             </div>
+            {user && (
+              <div className="hidden md:block text-right ml-3 border-l border-slate-200 pl-3">
+                <div className="font-semibold text-sm text-slate-700">
+                  {user.fullName}
+                </div>
+                <div className="text-xs text-slate-500">
+                  {user.company || user.email}
+                </div>
+              </div>
+            )}
             <UserMenu />
           </div>
         </div>

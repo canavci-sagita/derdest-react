@@ -38,7 +38,12 @@ const UsersPage: React.FC = async () => {
     orderBy: ["fullName asc"],
   });
 
-  const userLimit = await getUserLimitAction();
+  let userLimit = null;
+
+  if (currentUser?.role != ROLE_CONSTANTS.SUPER_ADMIN) {
+    userLimit = await getUserLimitAction();
+  }
+
   return (
     <div className="grid grid-cols-12 gap-y-10 gap-x-6">
       <div className="col-span-12">
@@ -47,7 +52,7 @@ const UsersPage: React.FC = async () => {
             <UserTable
               initialData={initialData}
               role={currentUser?.role || ROLE_CONSTANTS.USER}
-              userLimit={userLimit.result}
+              userLimit={userLimit?.result}
             />
           </div>
         </div>

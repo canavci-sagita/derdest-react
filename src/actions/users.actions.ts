@@ -26,7 +26,9 @@ import {
   getAllTenantUsers,
   reinviteUser,
   getAllPetitionTemplates,
-  uploadPetitionTemplateFile,
+  uploadPetitionTemplate,
+  downloadPetitionTemplate,
+  deletePetitionTemplate,
 } from "@/services/users/users.services";
 import {
   AddEditUserDto,
@@ -42,7 +44,7 @@ import {
   RoleAssignmentDto,
   SubscribeRequest,
   TenantUserGridDto,
-  UploadPetitionTemplateFileRequest,
+  UploadPetitionTemplateRequest,
   UserGridDto,
   UserProfileSummaryDto,
 } from "@/services/users/users.types";
@@ -402,16 +404,40 @@ export const getAllPetitionTemplatesAction = async (
   }
 };
 
-export const uploadPetitionTemplateFileAction = async (
-  data: UploadPetitionTemplateFileRequest
+export const uploadPetitionTemplateAction = async (
+  data: UploadPetitionTemplateRequest
 ): Promise<ApiResponseOf<PetitionTemplateDto>> => {
   try {
-    const response = await uploadPetitionTemplateFile(data);
+    const response = await uploadPetitionTemplate(data);
 
     if (response.isSuccess) {
       revalidatePath(`/settings/templates`);
     }
 
+    return response;
+  } catch (error: unknown) {
+    return getErrorResponse(error);
+  }
+};
+
+export const downloadPetitionTemplateAction = async (
+  templateFileId: number
+): Promise<Blob | ApiResponse> => {
+  try {
+    return await downloadPetitionTemplate(templateFileId);
+  } catch (error: unknown) {
+    return getErrorResponse(error);
+  }
+};
+
+export const deletePetitionTemplateAction = async (
+  petitionTemplateId: number
+): Promise<ApiResponse> => {
+  try {
+    const response = await deletePetitionTemplate(petitionTemplateId);
+    if (response.isSuccess) {
+      revalidatePath(`/settings/templates`);
+    }
     return response;
   } catch (error: unknown) {
     return getErrorResponse(error);
