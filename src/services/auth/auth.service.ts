@@ -15,7 +15,6 @@ import {
 } from "./auth.types";
 import { cookies } from "next/headers";
 import { apiFetchApiResponse } from "@/lib/api-fetch";
-import { HEADER_CONSTANTS } from "@/lib/constants/header.constants";
 
 const AUTH_ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/auth`;
 
@@ -63,31 +62,26 @@ export const setRefreshToken = async (response: Response): Promise<void> => {
   const setCookieHeader = response.headers.get("set-cookie");
   if (!setCookieHeader) return;
 
-  // 1. Extract the specific Refresh Token part manually
-  // This regex looks for "RefreshToken=VALUE;" ignoring other cookies
   const tokenRegex = new RegExp(`${COOKIE_CONSTANTS.REFRESH_TOKEN}=([^;]+)`);
   const tokenMatch = setCookieHeader.match(tokenRegex);
 
   if (!tokenMatch) return;
 
-  const refreshToken = tokenMatch[1]; // The actual token value
+  const refreshToken = tokenMatch[1];
 
-  // 2. Extract the Expires part (Case insensitive search)
-  // We search for "expires=" followed by anything until a semicolon OR end of string
   const expiresRegex = /expires=([^;]+)/i;
   const expiresMatch = setCookieHeader.match(expiresRegex);
 
   let refreshExpires: Date | undefined;
 
   if (expiresMatch) {
-    const dateStr = expiresMatch[1].trim(); // "Wed, 21 Oct..."
+    const dateStr = expiresMatch[1].trim();
     const parsedDate = new Date(dateStr);
     if (!isNaN(parsedDate.getTime())) {
       refreshExpires = parsedDate;
     }
   }
 
-  // 3. Set the cookie
   if (refreshToken) {
     const cookieStore = await cookies();
     cookieStore.set(COOKIE_CONSTANTS.REFRESH_TOKEN, refreshToken, {
@@ -95,7 +89,7 @@ export const setRefreshToken = async (response: Response): Promise<void> => {
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
-      expires: refreshExpires, // If undefined, it becomes a session cookie
+      expires: refreshExpires,
     });
   }
 };

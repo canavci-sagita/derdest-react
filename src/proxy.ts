@@ -14,7 +14,6 @@ import { SignInResponse } from "./services/auth/auth.types";
 import { refreshToken } from "./services/auth/auth.service";
 import { jwtDecode } from "jwt-decode";
 import { DecodedToken, mapJwtToCurrentUser } from "./lib/utils/auth.utils";
-import { cookies } from "next/headers";
 
 type RefreshResult = {
   accessToken: string;
@@ -79,54 +78,41 @@ export async function proxy(request: NextRequest) {
     );
     session = refreshResult.session;
   } else if (shouldAttemptRefresh) {
-    // const isAuthPage = request.nextUrl.pathname.startsWith("/auth");
-    // if (!isAuthPage) {
-    //   console.warn("Token refresh failed in middleware. Redirecting to login.");
-    //   const signInUrl = getRedirectUrl(request.nextUrl);
-    //   const response = NextResponse.redirect(signInUrl);
-    //   response.cookies.delete(COOKIE_CONSTANTS.AUTH_TOKEN);
-    //   response.cookies.delete(COOKIE_CONSTANTS.REFRESH_TOKEN);
-    //   return response;
-    // }
+    const isApiRoute = request.nextUrl.pathname.startsWith("/api");
+    const isServerAction = request.headers.has("next-action");
     const isAuthPage = request.nextUrl.pathname.startsWith("/auth");
 
-    if (!isAuthPage) {
-      console.warn("Token refresh failed in middleware.");
+    if (isAuthPage) {
+      const response = NextResponse.next();
 
-      // === MODIFIED LOGIC START ===
-      const isApiRoute = request.nextUrl.pathname.startsWith("/api");
-      const isServerAction = request.headers.has("next-action"); // Detects Server Actions
-      const wantsJson = request.headers
-        .get("accept")
-        ?.includes("application/json");
+      response.cookies.delete(COOKIE_CONSTANTS.AUTH_TOKEN);
+      response.cookies.delete(COOKIE_CONSTANTS.REFRESH_TOKEN);
 
-      // If it's an API, a Server Action, or a JSON fetch, return 401 instead of redirecting
-      if (isApiRoute || isServerAction || wantsJson) {
-        console.warn(
-          "Returning 401 for API/Action request to avoid redirect loop."
-        );
-
-        const response = NextResponse.json(
-          { message: "Session expired", code: "UNAUTHORIZED" },
-          { status: 401 }
-        );
-
-        // Clear cookies so the client knows state is reset
-        response.cookies.delete(COOKIE_CONSTANTS.AUTH_TOKEN);
-        response.cookies.delete(COOKIE_CONSTANTS.REFRESH_TOKEN);
-
-        return response;
-      } else {
-        // Only redirect for actual Page Navigation (GET requests for HTML)
-        console.warn("Redirecting browser navigation to login.");
-        const signInUrl = getRedirectUrl(request.nextUrl);
-        const response = NextResponse.redirect(signInUrl);
-        response.cookies.delete(COOKIE_CONSTANTS.AUTH_TOKEN);
-        response.cookies.delete(COOKIE_CONSTANTS.REFRESH_TOKEN);
-        return response;
-      }
-      // === MODIFIED LOGIC END ===
+      return response;
     }
+
+    if (isServerAction) {
+      const response = NextResponse.next();
+      response.headers.set("x-middleware-auth-error", "true");
+
+      return response;
+    }
+
+    if (isApiRoute) {
+      return NextResponse.json(
+        { message: "Session expired", code: "UNAUTHORIZED" },
+        { status: 401 }
+      );
+    }
+
+    const signInUrl = getRedirectUrl(request.nextUrl);
+
+    const response = NextResponse.redirect(signInUrl);
+
+    response.cookies.delete(COOKIE_CONSTANTS.AUTH_TOKEN);
+    response.cookies.delete(COOKIE_CONSTANTS.REFRESH_TOKEN);
+
+    return response;
   }
 
   const redirectResponse = handleRedirects(request, session?.user);
@@ -331,5 +317,6 @@ export function handleLanguage(request: NextRequest, response: NextResponse) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  //matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

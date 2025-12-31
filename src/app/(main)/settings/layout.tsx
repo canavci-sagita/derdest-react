@@ -1,4 +1,3 @@
-import { getUserProfileAction } from "@/actions/users.actions";
 import AppIcon from "@/components/common/ui/AppIcon";
 import SettingsTab from "@/components/settings/SettingsTab";
 import { getTranslationsCached } from "@/lib/i18n/server";

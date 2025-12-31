@@ -34,6 +34,18 @@ import { jwtDecode } from "jwt-decode";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+
+export const requireAuth = async () => {
+  const headersList = await headers();
+  if (headersList.get("x-middleware-auth-error")) {
+    const currentPath = headersList.get("x-invoke-path") || "/";
+    const signInUrl = `/auth/sign-in?returnUrl=${encodeURIComponent(
+      currentPath
+    )}`;
+    redirect(signInUrl);
+  }
+};
 
 export type SignInFormState = ActionFormState<SignInRequest>;
 

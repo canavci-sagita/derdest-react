@@ -7,6 +7,7 @@ import { cookies } from "next/headers";
 import { COOKIE_CONSTANTS } from "./constants/cookie.constants";
 import { HEADER_CONSTANTS } from "./constants/header.constants";
 import { getAuthenticatedUser } from "./session";
+import { requireAuth } from "@/actions/auth.actions";
 
 const getLanguage = async () => {
   try {
@@ -51,6 +52,7 @@ export const apiFetchRaw = async (
   input: RequestInfo,
   init?: RequestInit
 ): Promise<Response> => {
+  await requireAuth();
   const headers = await buildHeaders(init);
 
   return fetch(input, {
