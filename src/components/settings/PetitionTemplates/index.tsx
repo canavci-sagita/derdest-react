@@ -17,6 +17,7 @@ import { PetitionTemplateDto } from "@/services/users/users.types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toBase64 } from "@/lib/utils/file.utils";
 import { getErrorMessage } from "@/lib/utils/error.utils";
+import PetitionStructurePreviewModal from "./PetitionStructurePreviewModal";
 
 const PetitionTemplates: React.FC = () => {
   const { t } = useTranslation();
@@ -32,6 +33,10 @@ const PetitionTemplates: React.FC = () => {
   const [selectedPetitionTypeId, setSelectedPetitionTypeId] = useState<
     number | null
   >(selectedCaseTypeId);
+
+  const [previewTemplateId, setPreviewTemplateId] = useState<number | null>(
+    null
+  );
 
   const { data: caseTypes, isLoading: isLoadingCaseTypes } = useCaseTypes();
   const { data: petitionTypes, isLoading: isLoadingPetitionTypes } =
@@ -120,6 +125,7 @@ const PetitionTemplates: React.FC = () => {
       setSelectedCaseTypeId(null);
     } else {
       setSelectedCaseTypeId(id);
+      setSelectedPetitionTypeId(null);
     }
   };
 
@@ -160,6 +166,10 @@ const PetitionTemplates: React.FC = () => {
 
   const handleDelete = (id: number) => {
     deleteMutation.mutate(id);
+  };
+
+  const handlePreview = (id: number) => {
+    setPreviewTemplateId(id);
   };
 
   return (
@@ -236,8 +246,7 @@ const PetitionTemplates: React.FC = () => {
                     <TemplateCard
                       key={template.id}
                       template={template}
-                      onPreview={(id) => console.log("Preview", id)}
-                      onDownload={(id) => console.log("Download", id)}
+                      onPreview={handlePreview}
                       onDelete={handleDelete}
                     />
                   ))
@@ -261,6 +270,13 @@ const PetitionTemplates: React.FC = () => {
           )}
         </div>
       </main>
+      {previewTemplateId && (
+        <PetitionStructurePreviewModal
+          isOpen={!!previewTemplateId}
+          templateId={previewTemplateId}
+          onClose={() => setPreviewTemplateId(null)}
+        />
+      )}
     </div>
   );
 };

@@ -34,7 +34,7 @@ export const usePetitions = (
 
   const queryKey = ["petitions", caseId, params];
 
-  const { data, isLoading, isFetching } = useQuery({
+  const { data, isLoading, isFetching, refetch } = useQuery({
     queryKey,
     queryFn: async () => {
       const request: GetAllPetitionsRequest = {
@@ -114,6 +114,7 @@ export const usePetitions = (
 
     prefetchCreateModalData,
     getPetition,
+    refetch,
     //deletePetition: deleteMutation.mutate,
     //isDeleting: deleteMutation.isPending,
   };

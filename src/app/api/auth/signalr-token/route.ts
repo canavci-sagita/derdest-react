@@ -43,7 +43,6 @@ export async function GET() {
     const response = await refreshToken(headersForRefresh, authTokenRaw);
 
     if (!response.ok) {
-      console.log("Refresh failed");
       return NextResponse.json({ error: "Refresh failed" }, { status: 401 });
     }
 

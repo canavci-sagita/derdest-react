@@ -19,7 +19,7 @@ const SettingsLayout = async ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  const { t } = await getTranslationsCached();
+  //const { t } = await getTranslationsCached();
 
   const session = await getSession();
 
@@ -29,11 +29,11 @@ const SettingsLayout = async ({
 
   const user = session.user;
 
-  const initials = getInitials(user.fullName);
+  //const initials = getInitials(user.fullName);
 
   return (
     <div className="space-y-2">
-      <div className=" flex flex-col">
+      {/* <div className=" flex flex-col">
         <div className="relative h-32 w-full rounded-[0.6rem] rounded-b-none bg-gradient-to-b from-theme-1/95 to-theme-2/95">
           <div className="w-full h-full relative overflow-hidden before:content-[''] before:absolute before:inset-0 before:bg-texture-white before:-mt-[50rem] after:content-[''] after:absolute after:inset-0 after:bg-texture-white after:-mt-[50rem]"></div>
           <div className="absolute inset-x-0 top-0 mx-auto mt-8 h-32 w-32">
@@ -60,7 +60,7 @@ const SettingsLayout = async ({
             </span>
           </div>
         </div>
-      </div>
+      </div> */}
       <SettingsTab role={user.role} />
       {children}
     </div>

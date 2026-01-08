@@ -1,6 +1,10 @@
+"use client";
+
 import AppIcon from "@/components/common/ui/AppIcon";
+import { useTranslation } from "@/stores/TranslationContext";
 
 const ProfileLoading: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <div className="space-y-2 animate-pulse">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -11,10 +15,10 @@ const ProfileLoading: React.FC = () => {
             </div>
             <div>
               <h3 className="text-base font-semibold text-slate-900">
-                accountDetails
+                {t("accountDetails")}
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Your official legal identification and registration.
+                {t("accountDetails.hint")}
               </p>
             </div>
           </div>
@@ -36,10 +40,10 @@ const ProfileLoading: React.FC = () => {
             </div>
             <div>
               <h3 className="text-base font-semibold text-slate-900">
-                appSettings
+                {t("appSettings")}
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Preferences for language and legal jurisdiction.
+                {t("appSettings.hint")}
               </p>
             </div>
           </div>
@@ -65,10 +69,10 @@ const ProfileLoading: React.FC = () => {
             </div>
             <div>
               <h3 className="text-base font-semibold text-slate-900">
-                address
+                {t("address")}
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Your primary business or correspondence address.
+                {t("address.hint")}
               </p>
             </div>
           </div>

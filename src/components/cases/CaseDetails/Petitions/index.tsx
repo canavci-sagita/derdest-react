@@ -57,6 +57,7 @@ const Petitions: React.FC<PetitionsProps> = ({ caseId }) => {
     isLoading,
     prefetchCreateModalData,
     getPetition,
+    refetch,
   } = usePetitions(caseId, queryParams);
 
   const [isModalLoading, setIsModalLoading] = useState(false);
@@ -95,6 +96,7 @@ const Petitions: React.FC<PetitionsProps> = ({ caseId }) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingPetition(null);
+    refetch();
   };
 
   const handleApplyFilters = (newFilters: PetitionFilterRequest) => {

@@ -10,6 +10,7 @@ import {
   GetAllUsersRequest,
   InviteUserRequest,
   PetitionTemplateDto,
+  PetitionTemplateStructure,
   RoleAssignmentDto,
   SubscribeRequest,
   TenantUserGridDto,
@@ -335,17 +336,17 @@ export const deletePetitionTemplate = async (
 
 /**
  * Calls the API to download the specified template file..
- * @param documentId The ID of the template file.
+ * @param petitionTemplateId The ID of the template file.
  * @returns A promise that resolves to a Blob on success, or an ApiResponse on failure.
  */
-export const downloadPetitionTemplate = async (
+export const getPetitionTemplate = async (
   petitionTemplateId: number
-): Promise<Blob | ApiResponse> => {
+): Promise<ApiResponseOf<PetitionTemplateStructure>> => {
   const params = new URLSearchParams({
-    documentId: String(petitionTemplateId),
+    petitionTemplateId: String(petitionTemplateId),
   });
-  return await apiFetchBlob(
-    `${USERS_ENDPOINT}/DownloadPetitionTemplate?${params.toString()}`,
+  return await apiFetchApiResponse(
+    `${USERS_ENDPOINT}/GetPetitionTemplate?${params.toString()}`,
     {
       method: "GET",
     }

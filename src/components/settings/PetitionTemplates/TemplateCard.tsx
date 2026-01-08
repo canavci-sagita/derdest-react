@@ -14,14 +14,12 @@ import { Popconfirm, Tooltip } from "antd";
 interface TemplateCardProps {
   template: PetitionTemplateDto;
   onPreview: (id: number) => void;
-  onDownload: (id: number) => void;
   onDelete: (id: number) => void;
 }
 
 const TemplateCard: React.FC<TemplateCardProps> = ({
   template,
   onPreview,
-  onDownload,
   onDelete,
 }) => {
   const { t, currentLang } = useTranslation();
@@ -51,13 +49,6 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
             title="Preview"
           >
             <AppIcon icon="Eye" className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => onDownload(template.id)}
-            className="p-2 bg-white rounded-full shadow-lg text-slate-600 hover:text-emerald-600 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-100 hover:scale-110"
-            title="Download"
-          >
-            <AppIcon icon="Download" className="w-4 h-4" />
           </button>
         </div>
       </div>

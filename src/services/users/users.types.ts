@@ -358,3 +358,78 @@ export type PetitionTemplateDto = {
 export interface UploadPetitionTemplateRequest extends FileUploadRequest {
   petitionTypeId: number;
 }
+
+export enum TextAlignment {
+  left = 1,
+  center = 2,
+  right = 3,
+  justify = 4,
+}
+
+export class PageMargins {
+  top: number = 2.5;
+  bottom: number = 2.5;
+  left: number = 2.5;
+  right: number = 2.5;
+}
+
+export class HeaderStyle {
+  alignment: TextAlignment = TextAlignment.center;
+  isBold: boolean = true;
+}
+
+export class SubjectLineStyle {
+  prefix: string = "KONU:";
+  isBold: boolean = true;
+  indentation: boolean = true;
+}
+
+export class PartiesBlockStyle {
+  alignment: TextAlignment = TextAlignment.left;
+  labelWidth: number = 4.0;
+}
+
+export class FormattingStyle {
+  fontFamily: string = "Times New Roman";
+  baseFontSize: number = 12.0;
+  lineSpacing: number = 1.5;
+  pageMargins: PageMargins = new PageMargins();
+  alignment: TextAlignment = TextAlignment.justify;
+  paragraphIndentation: number = 1.25;
+}
+export class LayoutStyle {
+  header: HeaderStyle = new HeaderStyle();
+  subjectLine: SubjectLineStyle = new SubjectLineStyle();
+  partiesBlock: PartiesBlockStyle = new PartiesBlockStyle();
+}
+
+export class WritingStyle {
+  tone: string = "formal";
+  complexity: string = "medium";
+  perspective: string = "first-person";
+  narrativeFlow: string = "chronological";
+  demandStyle: string = "precise";
+}
+
+export class SectionDefinition {
+  key: string = "";
+  displayName: string = "";
+  isMandatory: boolean = false;
+  isRepeatable: boolean = false;
+  contentType: string = "text";
+  alternativeTitles: string[] = [];
+  detectedFromSample: boolean = false;
+  confidenceScore: number = 0;
+}
+
+export class SectionBlueprint {
+  sections: SectionDefinition[] = [];
+  hasFootnotes: boolean = false;
+}
+
+export class PetitionTemplateStructure {
+  formatting: FormattingStyle = new FormattingStyle();
+  layout: LayoutStyle = new LayoutStyle();
+  writing: WritingStyle = new WritingStyle();
+  sections: SectionBlueprint = new SectionBlueprint();
+}

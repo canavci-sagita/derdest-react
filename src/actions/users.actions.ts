@@ -27,8 +27,8 @@ import {
   reinviteUser,
   getAllPetitionTemplates,
   uploadPetitionTemplate,
-  downloadPetitionTemplate,
   deletePetitionTemplate,
+  getPetitionTemplate,
 } from "@/services/users/users.services";
 import {
   AddEditUserDto,
@@ -41,6 +41,7 @@ import {
   InviteUserRequest,
   inviteUserSchema,
   PetitionTemplateDto,
+  PetitionTemplateStructure,
   RoleAssignmentDto,
   SubscribeRequest,
   TenantUserGridDto,
@@ -420,16 +421,6 @@ export const uploadPetitionTemplateAction = async (
   }
 };
 
-export const downloadPetitionTemplateAction = async (
-  templateFileId: number
-): Promise<Blob | ApiResponse> => {
-  try {
-    return await downloadPetitionTemplate(templateFileId);
-  } catch (error: unknown) {
-    return getErrorResponse(error);
-  }
-};
-
 export const deletePetitionTemplateAction = async (
   petitionTemplateId: number
 ): Promise<ApiResponse> => {
@@ -439,6 +430,16 @@ export const deletePetitionTemplateAction = async (
       revalidatePath(`/settings/templates`);
     }
     return response;
+  } catch (error: unknown) {
+    return getErrorResponse(error);
+  }
+};
+
+export const getPetitionTemplateAction = async (
+  petitionTemplateId: number
+): Promise<ApiResponseOf<PetitionTemplateStructure>> => {
+  try {
+    return await getPetitionTemplate(petitionTemplateId);
   } catch (error: unknown) {
     return getErrorResponse(error);
   }

@@ -7,6 +7,7 @@ import { createLocalizedSchema } from "@/lib/utils/validation.utils";
 import {
   changePassword,
   completeInvitation,
+  refreshToken,
   resendVerificationCode,
   signIn,
   signUp,
@@ -20,6 +21,7 @@ import {
   CompleteInvitationRequest,
   completeInvitationSchema,
   SignInRequest,
+  SignInResponse,
   signInSchema,
   SignUpRequest,
   signUpSchema,
@@ -35,15 +37,72 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import { DecodedToken } from "@/lib/utils/auth.utils";
 
 export const requireAuth = async () => {
   const headersList = await headers();
   if (headersList.get("x-middleware-auth-error")) {
-    const currentPath = headersList.get("x-invoke-path") || "/";
-    const signInUrl = `/auth/sign-in?returnUrl=${encodeURIComponent(
-      currentPath
-    )}`;
-    redirect(signInUrl);
+    const cookieStore = await cookies();
+
+    const authTokenRaw = cookieStore.get(COOKIE_CONSTANTS.AUTH_TOKEN)?.value;
+
+    if (authTokenRaw) {
+      const response = await refreshToken(headersList, authTokenRaw);
+
+      if (response.ok) {
+        const jsonResponse: ApiResponseOf<SignInResponse> =
+          await response.json();
+        if (jsonResponse.isSuccess && jsonResponse.result) {
+          const newAccessToken = jsonResponse.result.token;
+
+          const decoded = jwtDecode<DecodedToken & { exp: number }>(
+            newAccessToken
+          );
+
+          cookieStore.set(COOKIE_CONSTANTS.AUTH_TOKEN, newAccessToken, {
+            httpOnly: true,
+            path: "/",
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            expires: new Date(decoded.exp * 1000),
+          });
+
+          const setCookieHeader = response.headers.get("set-cookie");
+          let newRefreshToken = "";
+          let refreshExpires: Date | undefined;
+
+          if (setCookieHeader) {
+            const parts = setCookieHeader.split(";");
+            const tokenKey = `${COOKIE_CONSTANTS.REFRESH_TOKEN}=`;
+            const tokenPart = parts.find((p) => p.trim().startsWith(tokenKey));
+            if (tokenPart)
+              newRefreshToken = tokenPart.trim().substring(tokenKey.length);
+
+            const expiresPart = parts.find((p) =>
+              p.trim().toLowerCase().startsWith("expires=")
+            );
+            if (expiresPart) {
+              refreshExpires = new Date(
+                expiresPart.trim().substring("expires=".length)
+              );
+            }
+            cookieStore.set(COOKIE_CONSTANTS.REFRESH_TOKEN, newRefreshToken, {
+              path: "/",
+              httpOnly: true,
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "strict",
+              expires: refreshExpires,
+            });
+          }
+        }
+      }
+
+      const currentPath = headersList.get("x-invoke-path") || "/";
+      const signInUrl = `/auth/sign-in?returnUrl=${encodeURIComponent(
+        currentPath
+      )}`;
+      redirect(signInUrl);
+    }
   }
 };
 
